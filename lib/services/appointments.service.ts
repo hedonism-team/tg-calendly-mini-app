@@ -15,3 +15,9 @@ export async function getAllUserAppointmentsForDate(
 ) {
   return [fakeAppointment()] as AppointmentModel[]
 }
+
+// TODO implement
+export async function createNewAppointment() {
+  // check validity of the input
+  // create new Appointment instance
+}
