@@ -1,15 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 
 import { TimeSlot } from '@/lib/models/Appointment.model'
+import { CreateNewAppointmentPayload } from '@/lib/services/appointments.service'
 
 interface CreateNewAppointmentFormProps {
   linkId: string
-  dateString: string | undefined
-  timeSlot: TimeSlot | undefined
+  requestingUserId: number
+  dateString: string
+  timeSlot: TimeSlot
   onAppointmentCreated: () => void
 }
 
@@ -28,6 +30,7 @@ export function CreateNewAppointmentForm({
   linkId,
   timeSlot,
   dateString,
+  requestingUserId,
   onAppointmentCreated,
 }: CreateNewAppointmentFormProps) {
   const {
@@ -38,12 +41,14 @@ export function CreateNewAppointmentForm({
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
   })
+  const [sendError, setSendError] = useState<Error | undefined>()
   const { mutate, isPending } = useMutation({
     mutationFn: async (formValues: FormValues) => {
-      const requestData = {
+      const requestData: CreateNewAppointmentPayload = {
         linkId,
-        date: dateString,
+        requestingUserId,
         timeSlot,
+        date: dateString,
         ...formValues,
       }
       const response = await fetch('/api/appointments', {
@@ -64,8 +69,9 @@ export function CreateNewAppointmentForm({
       reset()
       onAppointmentCreated()
     },
-    onError: async () => {
+    onError: async (e) => {
       // TODO already booked & internal error
+      setSendError(e)
     },
   })
   const onSubmit: SubmitHandler<FormValues> = (data) => mutate(data)
@@ -87,6 +93,10 @@ export function CreateNewAppointmentForm({
       <button className="btn" type="submit" disabled={isPending}>
         {isPending ? 'Sending...' : 'Send meet request'}
       </button>
+      {sendError?.message && (
+        <p className="text-red-600">{sendError?.message}</p>
+      )}
+      <br />
     </form>
   )
 }

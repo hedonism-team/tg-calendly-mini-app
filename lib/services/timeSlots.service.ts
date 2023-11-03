@@ -49,17 +49,20 @@ export async function getFreeTimeSlotsForRange(
   )
   const allTimeSlots = getAllTimeSlots(
     requestRange,
-    link.schedule,
     link.duration,
-    link.timezone
+    link.timezone,
+    link.schedule
   )
-  return getFreeTimeSlots(
+  console.log('allTimeSlots', JSON.stringify(allTimeSlots, null, 2))
+  const freeTimeSlots = getFreeTimeSlots(
     allTimeSlots,
     existingAppointments,
     link.timezone,
     requestRange,
     requesterTimezone
   )
+  console.log('freeTimeSlots', JSON.stringify(freeTimeSlots, null, 2))
+  return freeTimeSlots
 }
 
 // private
@@ -71,10 +74,13 @@ interface OneDayTimeSlots {
 
 function getAllTimeSlots(
   { start }: DateRange,
-  schedule: ScheduleType,
   duration: TimeSlotDuration,
-  timezone: string // host timezone
+  timezone: string, // host timezone
+  schedule?: ScheduleType
 ) {
+  if (!schedule) {
+    return []
+  }
   const daysToCheck = [
     start.subtract(1, 'day').tz(timezone),
     start.tz(timezone),
@@ -141,9 +147,11 @@ function getFreeTimeSlots(
   { start: startOfDay, finish: endOfDay }: DateRange, // request date range
   requesterTimezone: string
 ) {
+  console.log('appointments', appointments)
   const appointmentsRanges = appointments.map(({ date, timeSlot }) =>
     timeSlotToDateRange(date, timeSlot, timezone)
   )
+  console.log('appointmentsRanges', appointmentsRanges)
   console.log('request', {
     start: startOfDay.tz(requesterTimezone).format('YYYY-MM-DDTHH:mm:ssZ'),
     finish: endOfDay.tz(requesterTimezone).format('YYYY-MM-DDTHH:mm:ssZ'),

@@ -6,7 +6,7 @@ export interface LinkModel {
   timezone: string
   // dateRange
   duration: TimeSlotDuration
-  schedule: ScheduleType
+  schedule?: ScheduleType
 }
 
 export interface TimeSlotDuration {

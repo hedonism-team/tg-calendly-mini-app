@@ -11,7 +11,7 @@ export function TimezoneSelectorComponent({
   onTimezoneChanged,
 }: TimezoneSelectorComponentProps) {
   return (
-    <div className="max-w-512">
+    <div>
       <TimezoneSelect
         value={timezone}
         onChange={(option) => {

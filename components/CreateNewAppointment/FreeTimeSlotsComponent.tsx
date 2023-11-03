@@ -2,8 +2,10 @@ import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 import { LinkModel } from '@/lib/models/Link.model'
-import { getFreeTimeSlotsForRange } from '@/lib/services/timeSlots.service'
 import { TimeSlot } from '@/lib/models/Appointment.model'
+import { GetFreeTimeSlotsPayload } from '@/app/api/timeSlots/route'
+import { getFreeTimeSlotsForRange } from '@/lib/services/timeSlots.service'
+import queryString from 'query-string'
 
 interface FreeTimeSlotsComponentProps {
   link: LinkModel
@@ -22,11 +24,26 @@ export function FreeTimeSlotsComponent({
     return `link-${link.id}-slots-${dateString}-${timezone}`
   }
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: [getQueryKey()],
     queryFn: async () => {
-      return await getFreeTimeSlotsForRange(link, dateString, timezone)
+      const requestData: GetFreeTimeSlotsPayload = {
+        linkId: link.id,
+        date: dateString,
+        requesterTimezone: timezone,
+      }
+      const response = await fetch(
+        `/api/timeSlots?${queryString.stringify(requestData as any)}`
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to get free time slots')
+      }
+
+      const { timeSlots } = await response.json()
+      return timeSlots as ReturnType<typeof getFreeTimeSlotsForRange>
     },
+    staleTime: 0,
   })
 
   if (isLoading) {
@@ -34,7 +51,7 @@ export function FreeTimeSlotsComponent({
   }
 
   if (isError || !data) {
-    return <div>Error occurred while fetching data.</div>
+    return <div>Error occurred while fetching data. {error?.message}</div>
   }
 
   return (

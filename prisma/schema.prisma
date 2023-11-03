@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id   Int    @id @unique
+  Link Link[]
+
+  Appointments Appointment[] @relation(name: "user")
+  SentRequests Appointment[] @relation(name: "requestingUser")
+
+  @@map("users")
+}
+
+model Link {
+  id              String @id @unique
+  userId          Int
+  timezone        String
+  durationHours   Int
+  durationMinutes Int
+  scheduleId      Int    @unique
+
+  user        User          @relation(fields: [userId], references: [id])
+  Schedule    Schedule?     @relation(fields: [scheduleId], references: [id])
+  Appointment Appointment[]
+
+  @@map("links")
+}
+
+model Schedule {
+  id     Int     @id @default(autoincrement())
+  userId Int
+  linkId String?
+
+  mondayStartTime     String?
+  mondayFinishTime    String?
+  tuesdayStartTime    String?
+  tuesdayFinishTime   String?
+  wednesdayStartTime  String?
+  wednesdayFinishTime String?
+  thursdayStartTime   String?
+  thursdayFinishTime  String?
+  fridayStartTime     String?
+  fridayFinishTime    String?
+  saturdayStartTime   String?
+  saturdayFinishTime  String?
+  sundayStartTime     String?
+  sundayFinishTime    String?
+
+  Link Link?
+
+  @@map("schedules")
+}
+
+model Appointment {
+  id                 Int    @id @default(autoincrement())
+  userId             Int
+  linkId             String
+  requestingUserId   Int
+  date               String
+  timeSlotStartTime  String
+  timeSlotFinishTime String
+  email              String
+
+  user           User @relation(fields: [userId], references: [id], name: "user")
+  requestingUser User @relation(fields: [requestingUserId], references: [id], name: "requestingUser")
+  link           Link @relation(fields: [linkId], references: [id])
+
+  @@unique([userId, date, timeSlotStartTime])
+  @@unique([requestingUserId, date, timeSlotStartTime])
+  @@map("appointments")
+}

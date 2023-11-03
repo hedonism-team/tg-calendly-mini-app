@@ -2,6 +2,7 @@
 
 import React from 'react'
 import dayjs from 'dayjs'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { LinkModel } from '@/lib/models/Link.model'
 import { TimeSlot } from '@/lib/models/Appointment.model'
@@ -27,9 +28,11 @@ export function CreateNewAppointmentComponent({
   function getDefaultTimezone() {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
   }
+  const queryClient = useQueryClient()
   const [timezone, setTimezone] = React.useState<string>(getDefaultTimezone())
   const [date, setDate] = React.useState<Date | undefined>(dayjs().toDate())
   const [timeSlot, setTimeSlot] = React.useState<TimeSlot | undefined>()
+  const userId = 53698235
 
   return (
     <div className="grid grid-flow-row sm:max-w-sm xs:max-w-xs">
@@ -63,14 +66,18 @@ export function CreateNewAppointmentComponent({
       )}
 
       <div className="flex-1">
-        <CreateNewAppointmentForm
-          linkId={link.id}
-          dateString={getDateString(date)}
-          timeSlot={timeSlot}
-          onAppointmentCreated={async () => {
-            setTimeSlot(undefined)
-          }}
-        />
+        {date && timeSlot && (
+          <CreateNewAppointmentForm
+            linkId={link.id}
+            timeSlot={timeSlot}
+            requestingUserId={userId}
+            dateString={getDateString(date)}
+            onAppointmentCreated={async () => {
+              setTimeSlot(undefined)
+              await queryClient.invalidateQueries()
+            }}
+          />
+        )}
       </div>
     </div>
   )
