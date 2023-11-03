@@ -1,4 +1,4 @@
-import { AppointmentModel } from '@/lib/models/Appointment.model'
+import { AppointmentModel, TimeSlot } from '@/lib/models/Appointment.model'
 import { fakeAppointment } from '@/tests/fakers/appointments.faker'
 import { DateRange } from '@/lib/services/timeSlots.service'
 
@@ -16,8 +16,16 @@ export async function getAllUserAppointmentsForDate(
   return [fakeAppointment()] as AppointmentModel[]
 }
 
+export interface CreateNewAppointmentPayload {
+  linkId: string
+  date: string
+  timeSlot: TimeSlot
+  email: string
+}
+
 // TODO implement
-export async function createNewAppointment() {
-  // check validity of the input
+export async function createNewAppointment(
+  payload: CreateNewAppointmentPayload
+) {
   // create new Appointment instance
 }
