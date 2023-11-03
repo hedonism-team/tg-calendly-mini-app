@@ -9,7 +9,7 @@ import { TimeSlot } from '@/lib/models/Appointment.model'
 import { Calendar } from './Calendar'
 import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
 import { CreateNewAppointmentForm } from './Form'
-import { TimezoneSelectorComponent } from './TimezoneSelectorComponent'
+import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
 
 interface CreateNewAppointmentComponentProps {
   link: LinkModel
@@ -32,7 +32,7 @@ export function CreateNewAppointmentComponent({
   const [timezone, setTimezone] = React.useState<string>(getDefaultTimezone())
   const [date, setDate] = React.useState<Date | undefined>(dayjs().toDate())
   const [timeSlot, setTimeSlot] = React.useState<TimeSlot | undefined>()
-  const userId = 53698235
+  const userId = 53698235 // TODO pass tgUserId
 
   return (
     <div className="grid grid-flow-row sm:max-w-sm xs:max-w-xs">
