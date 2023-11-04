@@ -35,7 +35,7 @@ export function CreateNewAppointmentComponent({
   const [timeSlot, setTimeSlot] = React.useState<TimeSlot | undefined>()
 
   if (!userId) {
-    return <div>userId is not defined</div>
+    return <div>NewAppointment: userId is not defined</div>
   }
 
   return (

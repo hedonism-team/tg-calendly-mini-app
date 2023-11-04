@@ -30,7 +30,7 @@ export function CreateNewLinkComponent({
   const [linkId, setLinkId] = React.useState<string | undefined>()
 
   if (!userId) {
-    return <div>userId is not defined</div>
+    return <div>NewLink: userId is not defined</div>
   }
 
   return (
