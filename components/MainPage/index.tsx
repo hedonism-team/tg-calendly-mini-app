@@ -38,6 +38,8 @@ export function MainPageComponent({
     setIsClient(true)
   }, [])
 
+  console.log('start_param111', startParam)
+
   return (
     <>
       {isClient && (
