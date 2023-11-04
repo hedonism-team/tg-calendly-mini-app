@@ -15,9 +15,10 @@ export function TelegramEnvGuard({ onUserDetected }: TelegramUserIdProps) {
     WebAppUser | undefined
   >()
 
-  if (typeof window !== 'undefined' && !telegramUser) {
+  if (typeof window !== 'undefined') {
     const webAppUser = (window as unknown as Window).Telegram.WebAppUser
-    if (webAppUser) {
+    console.log('webAppUser', JSON.stringify(webAppUser))
+    if (!telegramUser && webAppUser) {
       setTelegramUser(webAppUser)
       onUserDetected(webAppUser.id)
     }
