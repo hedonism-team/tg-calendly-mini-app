@@ -5,7 +5,7 @@ export default async function CreateNewLinkPage() {
   return (
     <div>
       <p>ENV: {process.env.NODE_ENV}</p>
-      <CreateNewLinkComponent userId={undefined} env={process.env.NODE_ENV} />
+      <CreateNewLinkComponent userId={undefined} />
     </div>
   )
 }
