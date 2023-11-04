@@ -1,8 +1,12 @@
 import type { Appointment } from '@prisma/client'
 import prisma from '@/lib/prisma'
 import { DateRange } from '@/lib/services/timeSlots.service'
-import { AppointmentModel, TimeSlot } from '@/lib/models/Appointment.model'
-import { createUserIfNotExists } from '@/lib/services/users.service'
+import {
+  AppointmentModel,
+  AppointmentStatus,
+  TimeSlot,
+} from '@/lib/models/Appointment.model'
+import { createOrUpdateUser } from '@/lib/services/users.service'
 
 // TODO implement: date range filtering
 /**
@@ -44,7 +48,7 @@ export async function createNewAppointment({
     },
   })
 
-  await createUserIfNotExists({ id: requestingUserId })
+  await createOrUpdateUser({ id: requestingUserId })
 
   return mapDbAppointmentToModel(
     await prisma.appointment.create({
@@ -67,6 +71,15 @@ export async function getAppointmentById(id: number) {
   )
 }
 
+export async function updateAppointmentStatus(
+  id: number,
+  status: AppointmentStatus
+) {
+  return mapDbAppointmentToModel(
+    await prisma.appointment.update({ where: { id }, data: { status } })
+  )
+}
+
 // private
 
 function mapDbAppointmentToModel({
@@ -78,17 +91,19 @@ function mapDbAppointmentToModel({
   timeSlotStartTime,
   timeSlotFinishTime,
   email,
+  status,
 }: Appointment) {
   return {
     id,
     linkId,
-    userId,
-    requestingUserId,
+    userId: Number.parseInt(userId.toString()),
+    requestingUserId: Number.parseInt(requestingUserId.toString()),
     date,
     timeSlot: {
       startTime: timeSlotStartTime,
       finishTime: timeSlotFinishTime,
     },
     email,
+    status,
   } as AppointmentModel
 }

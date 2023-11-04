@@ -5,13 +5,13 @@ import {
   createNewSchedule,
   mapDbScheduleToModel,
 } from '@/lib/services/schedules.service'
-import { createUserIfNotExists } from '@/lib/services/users.service'
+import { createOrUpdateUser } from '@/lib/services/users.service'
 
 export async function createNewLink(
   { id, userId, timezone, duration }: LinkModel,
   schedule: Schedule
 ) {
-  await createUserIfNotExists({ id: userId })
+  await createOrUpdateUser({ id: userId })
   const scheduleInstance = await createNewSchedule(schedule)
   return mapDbInstanceToModel(
     await prisma.link.create({
@@ -54,7 +54,7 @@ function mapDbInstanceToModel(
 ) {
   const model: LinkModel = {
     id,
-    userId,
+    userId: Number.parseInt(userId.toString()),
     timezone,
     duration: {
       hours: durationHours,

@@ -6,6 +6,7 @@ export interface AppointmentModel {
   timeSlot: TimeSlot
   email: string
   requestingUserId: number
+  status?: AppointmentStatus
 }
 
 export interface TimeSlot {

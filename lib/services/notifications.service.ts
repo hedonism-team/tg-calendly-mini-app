@@ -5,7 +5,10 @@ import {
   AppointmentModel,
   AppointmentStatus,
 } from '@/lib/models/Appointment.model'
-import { getAppointmentById } from '@/lib/services/appointments.service'
+import {
+  getAppointmentById,
+  updateAppointmentStatus,
+} from '@/lib/services/appointments.service'
 
 export async function sendNewAppointmentNotification({
   id: appointmentId,
@@ -36,6 +39,7 @@ export async function updateNewAppointmentNotification({
   messageId: number
 }) {
   const { requestingUserId } = await getAppointmentById(appointmentId)
+  await updateAppointmentStatus(appointmentId, appointmentStatus)
   // TODO add clickable link to Tg profile
   const responseText = `You've ${appointmentStatus} an upcoming appointment with User#${requestingUserId}`
   await bot.api.editMessageText(chatId, messageId, responseText)

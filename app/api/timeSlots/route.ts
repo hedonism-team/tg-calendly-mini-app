@@ -32,6 +32,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// private
+
 function parseRequestData(requestUrl: string) {
   const { query: data } = queryString.parseUrl(requestUrl)
   // TODO validate data as GetFreeTimeSlotsPayload

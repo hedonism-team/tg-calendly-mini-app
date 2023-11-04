@@ -7,6 +7,7 @@ import { TelegramEnvGuard } from '@/components/TelegramEnvGuard'
 import { CreateNewAppointmentComponent } from '@/components/CreateNewAppointment'
 import { CreateNewLinkComponent } from '@/components/CreateNewLink'
 import { WelcomeComponent } from '@/components/MainPage/WelcomeComponent'
+import { CreateNewUserPayload } from '@/app/api/users/route'
 
 interface MainPageComponentProps {
   isProduction: boolean
@@ -38,6 +39,8 @@ export function MainPageComponent({
     setIsClient(true)
   }, [])
 
+  useCreateUser(user, isClient)
+
   return (
     <>
       {isClient && (
@@ -66,6 +69,8 @@ export function MainPageComponent({
   )
 }
 
+// private
+
 function isDefaultMode(startParam: string | undefined) {
   return startParam === ''
 }
@@ -80,4 +85,34 @@ function isCreateNewAppointmentMode(startParam: string | undefined) {
 
 function parseLinkId(startParam: string) {
   return startParam.slice(2)
+}
+
+function useCreateUser(user: WebAppUser | undefined, isClient: boolean) {
+  useEffect(() => {
+    const createUser = async (user: WebAppUser) => {
+      const requestData: CreateNewUserPayload = {
+        id: user.id,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        username: user.username,
+      }
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        body: JSON.stringify(requestData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create user')
+      }
+
+      return response.json()
+    }
+
+    if (user && isClient) {
+      createUser(user).then(() => {})
+    }
+  }, [user, isClient])
 }

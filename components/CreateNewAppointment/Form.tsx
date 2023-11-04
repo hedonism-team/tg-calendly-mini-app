@@ -60,7 +60,7 @@ export function CreateNewAppointmentForm({
       })
 
       if (!response.ok) {
-        throw new Error('Failed to update user')
+        throw new Error('Failed to create appointment')
       }
 
       return response.json()
@@ -91,7 +91,7 @@ export function CreateNewAppointmentForm({
       )}
       <br />
       <button className="btn" type="submit" disabled={isPending}>
-        {isPending ? 'Sending...' : 'Send meet request'}
+        {isPending ? 'Sending...' : 'Send appointment request'}
       </button>
       {sendError?.message && (
         <p className="text-red-600">{sendError?.message}</p>
