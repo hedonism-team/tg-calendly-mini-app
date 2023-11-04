@@ -1,34 +1,33 @@
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
+import queryString from 'query-string'
 
-import { LinkModel } from '@/lib/models/Link.model'
 import { TimeSlot } from '@/lib/models/Appointment.model'
 import { GetFreeTimeSlotsPayload } from '@/app/api/timeSlots/route'
 import { getFreeTimeSlotsForRange } from '@/lib/services/timeSlots.service'
-import queryString from 'query-string'
 
 interface FreeTimeSlotsComponentProps {
-  link: LinkModel
+  linkId: string
   dateString: string
   timezone: string
   onTimeSlotSelected: (timeSlot: TimeSlot) => void
 }
 
 export function FreeTimeSlotsComponent({
-  link,
+  linkId,
   dateString,
   timezone,
   onTimeSlotSelected,
 }: FreeTimeSlotsComponentProps) {
   function getQueryKey() {
-    return `link-${link.id}-slots-${dateString}-${timezone}`
+    return `link-${linkId}-slots-${dateString}-${timezone}`
   }
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [getQueryKey()],
     queryFn: async () => {
       const requestData: GetFreeTimeSlotsPayload = {
-        linkId: link.id,
+        linkId,
         date: dateString,
         requesterTimezone: timezone,
       }

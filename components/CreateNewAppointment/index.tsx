@@ -4,7 +4,6 @@ import React from 'react'
 import dayjs from 'dayjs'
 import { useQueryClient } from '@tanstack/react-query'
 
-import { LinkModel } from '@/lib/models/Link.model'
 import { TimeSlot } from '@/lib/models/Appointment.model'
 import { Calendar } from './Calendar'
 import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
@@ -12,7 +11,8 @@ import { CreateNewAppointmentForm } from './Form'
 import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
 
 interface CreateNewAppointmentComponentProps {
-  link: LinkModel
+  linkId: string
+  userId: number | undefined
 }
 
 function getDateString(date: Date | undefined) {
@@ -23,7 +23,8 @@ function getDateString(date: Date | undefined) {
 }
 
 export function CreateNewAppointmentComponent({
-  link,
+  linkId,
+  userId,
 }: CreateNewAppointmentComponentProps) {
   function getDefaultTimezone() {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -32,7 +33,10 @@ export function CreateNewAppointmentComponent({
   const [timezone, setTimezone] = React.useState<string>(getDefaultTimezone())
   const [date, setDate] = React.useState<Date | undefined>(dayjs().toDate())
   const [timeSlot, setTimeSlot] = React.useState<TimeSlot | undefined>()
-  const userId = 53698235 // TODO pass tgUserId
+
+  if (!userId) {
+    return <div>userId is not defined</div>
+  }
 
   return (
     <div className="grid grid-flow-row sm:max-w-sm xs:max-w-xs">
@@ -52,7 +56,7 @@ export function CreateNewAppointmentComponent({
 
       <div className="flex-1">
         <FreeTimeSlotsComponent
-          link={link}
+          linkId={linkId}
           dateString={getDateString(date)}
           timezone={timezone}
           onTimeSlotSelected={setTimeSlot}
@@ -68,7 +72,7 @@ export function CreateNewAppointmentComponent({
       <div className="flex-1">
         {date && timeSlot && (
           <CreateNewAppointmentForm
-            linkId={link.id}
+            linkId={linkId}
             timeSlot={timeSlot}
             requestingUserId={userId}
             dateString={getDateString(date)}

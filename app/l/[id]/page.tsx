@@ -15,7 +15,7 @@ export default async function CreateNewAppointmentPage({
     <div>
       <p>ENV: {process.env.NODE_ENV}</p>
       <p>Link id: {params.id}</p>
-      <CreateNewAppointmentComponent link={link} />
+      <CreateNewAppointmentComponent linkId={params.id} userId={undefined} />
     </div>
   )
 }
