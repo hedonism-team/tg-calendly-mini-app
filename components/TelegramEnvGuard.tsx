@@ -20,6 +20,8 @@ export function TelegramEnvGuard({
   const { user: webAppUser, start_param } = initDataUnsafe
   if (!telegramUser && webAppUser) {
     setTelegramUser(webAppUser)
+    console.log('webAppUser', webAppUser)
+    console.log('start_param', start_param)
     onUserDetected(webAppUser)
     onStartParamDetected(start_param ?? '')
   }
