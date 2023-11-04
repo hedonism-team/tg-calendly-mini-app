@@ -1,4 +1,4 @@
-import { Bot } from 'grammy'
+const { Bot } = require('grammy')
 
 const {
   VERCEL_URL: host,
@@ -9,6 +9,6 @@ const {
 const { BOT_TOKEN: token = '' } = process.env
 
 // Set your token in the vercel environment variable
-export const bot = new Bot(token)
+const bot = new Bot(token)
 
 void bot.api.setWebhook(webhook)
