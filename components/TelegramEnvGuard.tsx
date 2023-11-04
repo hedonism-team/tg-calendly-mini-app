@@ -18,14 +18,8 @@ export function TelegramEnvGuard({
     WebAppUser | undefined
   >()
 
-  if (typeof window === 'undefined') {
-    return <div>Getting Telegram user info...</div>
-  }
-
   const { initDataUnsafe } = (window as unknown as Window).Telegram.WebApp
   const { user, start_param } = initDataUnsafe
-  console.log('user', user)
-  console.log('start_param', start_param)
   if (!telegramUser && user) {
     setTelegramUser(user)
     onUserDetected(user.id)
@@ -35,10 +29,4 @@ export function TelegramEnvGuard({
   if (!telegramUser) {
     return <div>You opened this page outside Telegram!!!</div>
   }
-
-  return (
-    <>
-      <pre>{JSON.stringify(telegramUser)}</pre>
-    </>
-  )
 }
