@@ -1,14 +1,38 @@
 'use client'
 
-import { TelegramEnvGuard } from '@/components/TelegramEnvGuard'
 import { useEffect, useState } from 'react'
+import { WebAppUser } from '@twa-dev/types'
+
+import { TelegramEnvGuard } from '@/components/TelegramEnvGuard'
 import { CreateNewAppointmentComponent } from '@/components/CreateNewAppointment'
 import { CreateNewLinkComponent } from '@/components/CreateNewLink'
+import { WelcomeComponent } from '@/components/MainPage/WelcomeComponent'
 
-export function MainPageComponent() {
+interface MainPageComponentProps {
+  isProduction: boolean
+  defaultUserId: number | undefined
+  defaultStartParam: string | undefined
+}
+
+export function MainPageComponent({
+  isProduction,
+  defaultUserId,
+  defaultStartParam,
+}: MainPageComponentProps) {
   const [isClient, setIsClient] = useState(false)
-  const [userId, setUserId] = useState<number | undefined>()
+  const [user, setUser] = useState<WebAppUser | undefined>()
   const [startParam, setStartParam] = useState<string | undefined>()
+
+  if (!isProduction) {
+    if (defaultUserId && !user) {
+      console.log('default userId', defaultUserId)
+      setUser({ id: defaultUserId } as WebAppUser)
+    }
+    if (defaultStartParam && !startParam) {
+      console.log('default startParam', defaultStartParam)
+      setStartParam(defaultStartParam)
+    }
+  }
 
   useEffect(() => {
     setIsClient(true)
@@ -18,22 +42,42 @@ export function MainPageComponent() {
     <>
       {isClient && (
         <>
-          <TelegramEnvGuard
-            onUserDetected={setUserId}
-            onStartParamDetected={setStartParam}
-          />
-          {userId && startParam === '' && <div>Welcome to Meetly</div>}
-          {userId && startParam === 'new' && (
-            <CreateNewLinkComponent userId={userId} />
+          {isProduction && (
+            <TelegramEnvGuard
+              onUserDetected={setUser}
+              onStartParamDetected={setStartParam}
+            />
           )}
-          {userId && startParam && startParam.startsWith('l_') && (
+          {user && isDefaultMode(startParam) && (
+            <WelcomeComponent userId={user.id} />
+          )}
+          {user && isCreateNewLinkMode(startParam) && (
+            <CreateNewLinkComponent userId={user.id} />
+          )}
+          {user && isCreateNewAppointmentMode(startParam) && (
             <CreateNewAppointmentComponent
-              linkId={startParam.slice(2)}
-              userId={userId}
+              userId={user.id}
+              linkId={parseLinkId(startParam!)}
             />
           )}
         </>
       )}
     </>
   )
+}
+
+function isDefaultMode(startParam: string | undefined) {
+  return startParam === ''
+}
+
+function isCreateNewLinkMode(startParam: string | undefined) {
+  return startParam === 'new'
+}
+
+function isCreateNewAppointmentMode(startParam: string | undefined) {
+  return startParam && startParam.startsWith('l_')
+}
+
+function parseLinkId(startParam: string) {
+  return startParam.slice(2)
 }

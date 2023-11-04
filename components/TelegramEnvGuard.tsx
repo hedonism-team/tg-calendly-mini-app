@@ -1,8 +1,8 @@
-import React from 'react'
+import { useState } from 'react'
 import { Telegram, WebAppUser } from '@twa-dev/types'
 
 interface TelegramUserIdProps {
-  onUserDetected: (userId: number) => void
+  onUserDetected: (user: WebAppUser) => void
   onStartParamDetected: (param: string) => void
 }
 
@@ -14,15 +14,13 @@ export function TelegramEnvGuard({
   onUserDetected,
   onStartParamDetected,
 }: TelegramUserIdProps) {
-  const [telegramUser, setTelegramUser] = React.useState<
-    WebAppUser | undefined
-  >()
+  const [telegramUser, setTelegramUser] = useState<WebAppUser | undefined>()
 
   const { initDataUnsafe } = (window as unknown as Window).Telegram.WebApp
-  const { user, start_param } = initDataUnsafe
-  if (!telegramUser && user) {
-    setTelegramUser(user)
-    onUserDetected(user.id)
+  const { user: webAppUser, start_param } = initDataUnsafe
+  if (!telegramUser && webAppUser) {
+    setTelegramUser(webAppUser)
+    onUserDetected(webAppUser)
     onStartParamDetected(start_param ?? '')
   }
 
