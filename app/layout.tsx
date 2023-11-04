@@ -8,6 +8,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+        <script>eruda.init();</script>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+        <title>Hello Meetly!</title>
+      </head>
       <body>
         <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
