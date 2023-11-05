@@ -42,7 +42,7 @@ export function MainPageComponent({
   useCreateUser(user, isClient)
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       {isClient && (
         <>
           {isProduction && (
@@ -65,7 +65,7 @@ export function MainPageComponent({
           )}
         </>
       )}
-    </>
+    </div>
   )
 }
 

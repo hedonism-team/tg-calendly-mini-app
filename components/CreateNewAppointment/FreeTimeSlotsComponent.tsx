@@ -1,16 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import queryString from 'query-string'
-
-import { TimeSlot } from '@/lib/models/Appointment.model'
 import { GetFreeTimeSlotsPayload } from '@/app/api/timeSlots/route'
 import { getFreeTimeSlotsForRange } from '@/lib/services/timeSlots.service'
+import { ShiftedTimeSlot } from '@/lib/models/Appointment.model'
 
 interface FreeTimeSlotsComponentProps {
   linkId: string
   dateString: string
   timezone: string
-  onTimeSlotSelected: (timeSlot: TimeSlot) => void
+  onTimeSlotSelected: (timeSlot: ShiftedTimeSlot | undefined) => void
 }
 
 export function FreeTimeSlotsComponent({
@@ -19,6 +18,14 @@ export function FreeTimeSlotsComponent({
   timezone,
   onTimeSlotSelected,
 }: FreeTimeSlotsComponentProps) {
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<
+    ShiftedTimeSlot | undefined
+  >()
+
+  useEffect(() => {
+    setSelectedTimeSlot(undefined)
+  }, [dateString])
+
   function getQueryKey() {
     return `link-${linkId}-slots-${dateString}-${timezone}`
   }
@@ -46,24 +53,69 @@ export function FreeTimeSlotsComponent({
   })
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <div className="flex w-full justify-center">
+        <span className="loading loading-spinner loading-md"></span>
+      </div>
+    )
   }
 
   if (isError || !data) {
-    return <div>Error occurred while fetching data. {error?.message}</div>
+    return (
+      <div className="flex w-full justify-center">
+        <div className="text-error">
+          <span>Error occurred while fetching data. {error?.message}</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="flex w-full justify-center">
+        <div className="text-error">
+          <span>No time slots available</span>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="grid grid-flow-row auto-rows-max">
-      {data.map((timeSlot) => (
-        <div
-          key={timeSlot.startTime}
-          className="flex flex-row"
-          onClick={() => onTimeSlotSelected(timeSlot)}
-        >
-          {timeSlot.startTime} - {timeSlot.finishTime}
-        </div>
-      ))}
+    // max-h-56 overflow-y-scroll
+    <div className="flex w-full justify-center ">
+      <div className="flex flex-wrap w-80 justify-start">
+        {data.map((timeSlot) => (
+          <div key={timeSlot.startTime} className="flex m-2 justify-center">
+            <div
+              className={
+                'btn w-36 ' +
+                (areTimeSlotsEqual(timeSlot, selectedTimeSlot!)
+                  ? 'btn-primary'
+                  : 'btn-outline btn-secondary')
+              }
+              onClick={() => {
+                setSelectedTimeSlot(timeSlot)
+                onTimeSlotSelected(timeSlot)
+              }}
+            >
+              {timeSlot.startTime} - {timeSlot.finishTime}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
+  )
+}
+
+// helpers
+
+function areTimeSlotsEqual(
+  firstTimeSlot: ShiftedTimeSlot,
+  secondTimeSlot: ShiftedTimeSlot | undefined
+) {
+  return (
+    secondTimeSlot &&
+    firstTimeSlot.startTime === secondTimeSlot.startTime &&
+    firstTimeSlot.finishTime === secondTimeSlot.finishTime
   )
 }

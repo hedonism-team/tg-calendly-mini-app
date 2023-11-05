@@ -4,7 +4,7 @@ import React from 'react'
 import dayjs from 'dayjs'
 import { useQueryClient } from '@tanstack/react-query'
 
-import { TimeSlot } from '@/lib/models/Appointment.model'
+import { ShiftedTimeSlot } from '@/lib/models/Appointment.model'
 import { Calendar } from './Calendar'
 import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
 import { CreateNewAppointmentForm } from './Form'
@@ -32,57 +32,77 @@ export function CreateNewAppointmentComponent({
   const queryClient = useQueryClient()
   const [timezone, setTimezone] = React.useState<string>(getDefaultTimezone())
   const [date, setDate] = React.useState<Date | undefined>(dayjs().toDate())
-  const [timeSlot, setTimeSlot] = React.useState<TimeSlot | undefined>()
+  const [timeSlot, setTimeSlot] = React.useState<ShiftedTimeSlot | undefined>()
+
+  function isFormMode() {
+    return timezone && date && timeSlot
+  }
 
   if (!userId) {
     return <div>NewAppointment: userId is not defined</div>
   }
 
   return (
-    <div className="grid grid-flow-row sm:max-w-sm xs:max-w-xs">
-      <div className="flex-1">
-        <TimezoneSelectorComponent
-          timezone={timezone}
-          onTimezoneChanged={setTimezone}
-        />
+    <div className="flex flex-col">
+      <div className="flex-1 border-b-white my-2">
+        <div className="flex w-full justify-center">HEADER</div>
       </div>
 
-      <div className="flex-1">
-        <Calendar
-          date={date}
-          onDateSelected={(date) => setDate(date ?? new Date())}
-        />
-      </div>
+      {!isFormMode() && (
+        <div>
+          <div className="flex-1">
+            <div className="flex w-full justify-center">
+              <div className="w-80">
+                <TimezoneSelectorComponent
+                  timezone={timezone}
+                  onTimezoneChanged={(timezone) => {
+                    setTimezone(timezone)
+                    setTimeSlot(undefined)
+                  }}
+                />
+              </div>
+            </div>
+          </div>
 
-      <div className="flex-1">
-        <FreeTimeSlotsComponent
-          linkId={linkId}
-          dateString={getDateString(date)}
-          timezone={timezone}
-          onTimeSlotSelected={setTimeSlot}
-        />
-      </div>
+          <div className="flex-1">
+            <div className="flex w-full justify-center">
+              <div className="w-80">
+                <Calendar
+                  date={date}
+                  onDateSelected={(date) => {
+                    setDate(date ?? new Date())
+                    setTimeSlot(undefined)
+                  }}
+                />
+              </div>
+            </div>
+          </div>
 
-      {timeSlot && (
-        <p className="flex-1 text-red-600">
-          Selected time slot: {timeSlot.startTime} - {timeSlot.finishTime}
-        </p>
+          <div className="flex-1">
+            <FreeTimeSlotsComponent
+              linkId={linkId}
+              timezone={timezone}
+              dateString={getDateString(date)}
+              onTimeSlotSelected={setTimeSlot}
+            />
+          </div>
+        </div>
       )}
-
-      <div className="flex-1">
-        {date && timeSlot && (
+      {isFormMode() && (
+        <div className="flex-1">
           <CreateNewAppointmentForm
             linkId={linkId}
-            timeSlot={timeSlot}
+            timeSlot={timeSlot!}
             requestingUserId={userId}
+            requestingUserTimezone={timezone}
             dateString={getDateString(date)}
             onAppointmentCreated={async () => {
               setTimeSlot(undefined)
               await queryClient.invalidateQueries()
             }}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

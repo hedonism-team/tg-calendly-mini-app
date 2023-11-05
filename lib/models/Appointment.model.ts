@@ -14,6 +14,12 @@ export interface TimeSlot {
   finishTime: string // "HH:mm" string in the link creator's timezone
 }
 
+export interface ShiftedTimeSlot extends TimeSlot {
+  originalDate: string
+  originalStartTime: string
+  originalFinishTime: string
+}
+
 export enum AppointmentStatus {
   approved = 'approved',
   rejected = 'rejected',

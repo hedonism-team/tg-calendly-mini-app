@@ -10,20 +10,25 @@ export interface CalendarProps {
 }
 
 export function Calendar({ date, onDateSelected }: CalendarProps) {
+  // TODO: remove footer
   let footer = <p>Please pick a day.</p>
   if (date) {
     footer = <p>You picked {format(date, 'PP')}.</p>
   }
 
-  // TODO support dateRange + completely booked days
-  const disabledDays = [dayjs().add(1, 'day').toDate()]
+  const disabledDays = [
+    {
+      from: dayjs().subtract(50, 'years').toDate(),
+      to: dayjs().subtract(1, 'days').toDate(),
+    },
+  ]
 
   return (
     <DayPicker
       mode="single"
       selected={date}
       onSelect={onDateSelected}
-      footer={footer}
+      // footer={footer}
       disabled={disabledDays}
     />
   )

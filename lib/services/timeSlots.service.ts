@@ -7,7 +7,11 @@ import isBetween from 'dayjs/plugin/isBetween'
 import { LinkModel, TimeSlotDuration } from '@/lib/models/Link.model'
 import { getAllUserAppointmentsForDate } from '@/lib/services/appointments.service'
 import { DayOfWeek, ScheduleType } from '@/lib/models/Schedule.model'
-import { AppointmentModel, TimeSlot } from '@/lib/models/Appointment.model'
+import {
+  AppointmentModel,
+  ShiftedTimeSlot,
+  TimeSlot,
+} from '@/lib/models/Appointment.model'
 import { doRangesIntersect, getWeekday } from '@/lib/utils/dates'
 
 dayjs.extend(duration)
@@ -206,6 +210,9 @@ function getShiftedTimeSlot(
   targetTimezone: string
 ) {
   return {
+    originalDate: dateString,
+    originalStartTime: startTime,
+    originalFinishTime: finishTime,
     startTime: dayjs
       .tz(`${dateString}T${startTime}:00`, sourceTimezone)
       .tz(targetTimezone)
@@ -214,5 +221,5 @@ function getShiftedTimeSlot(
       .tz(`${dateString}T${finishTime}:00`, sourceTimezone)
       .tz(targetTimezone)
       .format('HH:mm'),
-  }
+  } as ShiftedTimeSlot
 }

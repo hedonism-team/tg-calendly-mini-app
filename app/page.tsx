@@ -11,7 +11,7 @@ export default function Home() {
     : undefined
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="container mx-auto max-w-7xl">
       <MainPageComponent
         isProduction={isProduction}
         defaultUserId={defaultUserId}
