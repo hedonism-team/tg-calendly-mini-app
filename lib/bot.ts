@@ -11,8 +11,11 @@ import prisma from '@/lib/prisma'
 const { BOT_TOKEN: token = '' } = process.env
 export const bot = new Bot(token)
 
-bot.on('message', async (ctx) => {
-  // do nothing
+const WELCOME_TEXT =
+  "Hey there! 👋🏻 I'm Meetly, your personal scheduling assistant.\n\nLet me help you connect with colleagues and friends by booking their time 😊"
+
+bot.command('start', async (ctx) => {
+  await ctx.reply(WELCOME_TEXT)
 })
 
 bot.command('link', async (ctx) => {
@@ -59,6 +62,10 @@ bot.on('callback_query:data', async (ctx) => {
   }
 
   await ctx.answerCallbackQuery({ show_alert: true, text: 'Unknown action' })
+})
+
+bot.on('message', async (ctx) => {
+  // do nothing
 })
 
 // private
