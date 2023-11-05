@@ -21,10 +21,17 @@ export async function getAllUserAppointmentsForDate(
 ) {
   const appointments = await prisma.appointment.findMany({
     where: {
-      userId,
-      status: {
-        not: AppointmentStatus.rejected,
-      },
+      AND: [
+        { userId },
+        {
+          OR: [
+            {
+              status: AppointmentStatus.approved,
+            },
+            { status: null },
+          ],
+        },
+      ],
     },
   })
   return appointments.map(mapDbAppointmentToModel)
