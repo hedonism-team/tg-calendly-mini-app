@@ -1,6 +1,7 @@
-import { TimeSlotDuration } from '@/lib/models/Link.model'
-import React, { useState } from 'react'
 import { range } from 'lodash'
+import React, { useState } from 'react'
+
+import { TimeSlotDuration } from '@/lib/models/Link.model'
 import { TelegramBackButton } from '@/components/TelegramBackButton'
 import { TelegramMainButton } from '@/components/TelegramMainButton'
 
@@ -11,13 +12,19 @@ interface DurationSelectorProps {
 
 const allHours = range(0, 6)
 const allMinutes = range(0, 60, 15)
+const defaultDurationHours = 1
+const defaultDurationMinutes = 0
 
 export function DurationSelector({
   onDurationSelected,
   onBackButtonClicked,
 }: DurationSelectorProps) {
-  const [durationHours, setDurationHours] = useState<number | undefined>()
-  const [durationMinutes, setDurationMinutes] = useState<number | undefined>()
+  const [durationHours, setDurationHours] = useState<number | undefined>(
+    defaultDurationHours
+  )
+  const [durationMinutes, setDurationMinutes] = useState<number | undefined>(
+    defaultDurationMinutes
+  )
 
   return (
     <div className="flex w-full justify-center">
