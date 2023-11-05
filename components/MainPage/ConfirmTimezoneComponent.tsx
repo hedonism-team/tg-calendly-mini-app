@@ -1,7 +1,7 @@
-import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
-import { TelegramMainButton } from '@/components/TelegramMainButton'
 import React from 'react'
+import { TelegramMainButton } from '@/components/TelegramMainButton'
 import { PageHeader } from '@/components/PageHeader'
+import { TimezoneSelector } from '@/components/TimezoneSelector'
 
 interface ConfirmTimezoneComponentProps {
   timezone: string
@@ -22,9 +22,11 @@ export function ConfirmTimezoneComponent({
       <div className="flex-1">
         <div className="flex w-full mt-36 justify-center">
           <div className="w-80">
-            <TimezoneSelectorComponent
-              timezone={timezone!}
-              onTimezoneChanged={onTimezoneChanged}
+            <TimezoneSelector
+              value={timezone}
+              onChange={(option) => {
+                onTimezoneChanged(option.value)
+              }}
             />
           </div>
           <TelegramMainButton
