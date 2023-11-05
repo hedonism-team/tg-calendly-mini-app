@@ -28,12 +28,15 @@ export function ScheduleComponent({
   return (
     <div className="flex w-full justify-center">
       <div className="w-80">
-        <div className="grid grid-cols-2 gap-x-3 gap-y-2 justify-center">
+        <div className="flex flex-col justify-center">
           {weekdayNames.map((weekdayName, dayOfWeek) => (
             <WeekdayWorkingHoursComponent
               key={weekdayName}
               weekdayName={weekdayName}
-              selectedWorkingHours={getSelectedWorkingHours(schedule, dayOfWeek)}
+              selectedWorkingHours={getSelectedWorkingHours(
+                schedule,
+                dayOfWeek
+              )}
               onWorkingHoursSelected={(value) => {
                 const updatedSchedule = getUpdatedSchedule(
                   schedule,

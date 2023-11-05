@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { range } from 'lodash'
 import { WorkingHoursRange } from '@/lib/models/Schedule.model'
 
@@ -9,8 +9,8 @@ interface WeekdayWorkingHoursComponentProps {
 }
 
 enum TimePointType {
-  start = 'start',
-  finish = 'finish',
+  start = 'Start',
+  finish = 'Finish',
 }
 
 interface TimePoint {
@@ -32,17 +32,45 @@ export function WeekdayWorkingHoursComponent({
   selectedWorkingHours,
   onWorkingHoursSelected,
 }: WeekdayWorkingHoursComponentProps) {
+  const [isNonWorkingDay, setIsNonWorkingDay] = useState<boolean>(
+    selectedWorkingHours === null
+  )
+
   return (
-    <>
+    <div className="flex flex-row">
+      <div className="w-1/3 flex justify-end">
+        <div className="flex flex-row mx-2 items-end">
+          <div className="mx-2">
+            <input
+              type="checkbox"
+              checked={!isNonWorkingDay}
+              onChange={(e) => {
+                const value = e.target.checked
+                if (!value) {
+                  setIsNonWorkingDay(true)
+                  onWorkingHoursSelected(null)
+                } else {
+                  setIsNonWorkingDay(false)
+                }
+              }}
+              className="checkbox checkbox-sm"
+            />
+          </div>
+          <div className="w-12 mb-1">
+            <span>{weekdayName.slice(0, 3)}</span>
+          </div>
+        </div>
+      </div>
       {timePointTypes.map((timePointType) => (
-        <div key={weekdayName + timePointType} className="">
+        <div key={timePointType} className="w-1/3 flex flex-row">
           <div className="form-control max-w-xs">
-            <label className="label">
-              <span className="label-text label">
-                {weekdayName} {timePointType} time
+            <label className="label py-1">
+              <span className="label-text">
+                {timePointType === TimePointType.start ? 'From' : 'To'}
               </span>
             </label>
             <select
+              disabled={isNonWorkingDay}
               className="select select-xs select-bordered max-w-xs"
               onChange={(e) => {
                 const value = e.target.value
@@ -69,7 +97,7 @@ export function WeekdayWorkingHoursComponent({
           </div>
         </div>
       ))}
-    </>
+    </div>
   )
 }
 
@@ -93,7 +121,7 @@ function isSelectedTimePoint(
   if (!selectedWorkingHours) {
     return false
   }
-  if (timePointType === 'start') {
+  if (timePointType === TimePointType.start) {
     return timePointToString(timePoint) === selectedWorkingHours.startTime
   }
   return timePointToString(timePoint) === selectedWorkingHours.finishTime
