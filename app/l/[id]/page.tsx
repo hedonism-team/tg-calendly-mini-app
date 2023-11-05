@@ -1,7 +1,7 @@
 import React from 'react'
-import { CreateNewAppointmentComponent } from '@/components/CreateNewAppointment'
 import { getLinkById } from '@/lib/services/links.service'
 
+// TODO remove
 export default async function CreateNewAppointmentPage({
   params,
 }: {
@@ -15,7 +15,6 @@ export default async function CreateNewAppointmentPage({
     <div>
       <p>ENV: {process.env.NODE_ENV}</p>
       <p>Link id: {params.id}</p>
-      <CreateNewAppointmentComponent linkId={params.id} userId={undefined} />
     </div>
   )
 }

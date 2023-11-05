@@ -1,37 +1,28 @@
-'use client'
-
 import React, { useState } from 'react'
 
 import { TimeSlotDuration } from '@/lib/models/Link.model'
 import { CreateNewLinkForm } from './Form'
 import { DurationSelector } from './DurationSelector'
 import { ScheduleComponent } from './ScheduleComponent'
-import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
 import { ScheduleModel } from '@/lib/models/Schedule.model'
-import { TelegramMainButton } from '@/components/TelegramMainButton'
 
 interface CreateNewLinkComponentProps {
   userId: number | undefined
+  timezone: string
+  onBackButtonClicked: () => void
 }
 
 export function CreateNewLinkComponent({
   userId,
+  timezone,
+  onBackButtonClicked,
 }: CreateNewLinkComponentProps) {
-  function getDefaultTimezone() {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone
-  }
-  const [timezone, setTimezone] = useState<string>(getDefaultTimezone())
-  const [isTimezoneConfirmed, setIsTimezoneConfirmed] = useState<boolean>(false)
   const [duration, setDuration] = useState<TimeSlotDuration | undefined>()
   const [schedule, setSchedule] = useState<ScheduleModel | undefined>()
   const [isLinkCreated, setIsLinkCreated] = useState<boolean | undefined>()
 
-  function isTimezoneConfirmationMode() {
-    return !isTimezoneConfirmed
-  }
-
   function isDurationMode() {
-    return isTimezoneConfirmed && !duration
+    return !duration
   }
 
   function isScheduleMode() {
@@ -42,6 +33,7 @@ export function CreateNewLinkComponent({
     return duration && schedule && !isLinkCreated
   }
 
+  // TODO remove
   if (!userId) {
     return <div>NewLink: userId is not defined</div>
   }
@@ -52,30 +44,11 @@ export function CreateNewLinkComponent({
         <div className="flex w-full justify-center">HEADER</div>
       </div>
 
-      {isTimezoneConfirmationMode() && (
-        <div className="flex-1 my-2">
-          <div className="flex w-full justify-center">
-            <div className="w-80">
-              <TimezoneSelectorComponent
-                timezone={timezone}
-                onTimezoneChanged={setTimezone}
-              />
-            </div>
-          </div>
-          <TelegramMainButton
-            text={'Confirm my timezone'}
-            onClick={() => setIsTimezoneConfirmed(true)}
-          />
-        </div>
-      )}
-
       {isDurationMode() && (
         <div className="flex-1">
           <DurationSelector
             onDurationSelected={setDuration}
-            onBackButtonClicked={() => {
-              setIsTimezoneConfirmed(false)
-            }}
+            onBackButtonClicked={onBackButtonClicked}
           />
         </div>
       )}
@@ -108,7 +81,11 @@ export function CreateNewLinkComponent({
         </div>
       )}
 
-      {isLinkCreated && <div>Success! Link has been created!s</div>}
+      {isLinkCreated && (
+        <div className="flex-1 w-full justify-center">
+          Success! Link has been created!
+        </div>
+      )}
     </div>
   )
 }

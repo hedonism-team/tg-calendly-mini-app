@@ -6,6 +6,8 @@ import * as z from 'zod'
 
 import { ShiftedTimeSlot } from '@/lib/models/Appointment.model'
 import { CreateNewAppointmentPayload } from '@/lib/services/appointments.service'
+import { TelegramBackButton } from '@/components/TelegramBackButton'
+import { TelegramMainButton } from '@/components/TelegramMainButton'
 
 interface CreateNewAppointmentFormProps {
   linkId: string
@@ -14,6 +16,7 @@ interface CreateNewAppointmentFormProps {
   timeSlot: ShiftedTimeSlot
   requestingUserTimezone: string
   onAppointmentCreated: () => void
+  onBackButtonClicked: () => void
 }
 
 interface FormValues {
@@ -32,8 +35,9 @@ export function CreateNewAppointmentForm({
   timeSlot,
   dateString,
   requestingUserId,
-  onAppointmentCreated,
   requestingUserTimezone,
+  onAppointmentCreated,
+  onBackButtonClicked,
 }: CreateNewAppointmentFormProps) {
   const {
     register,
@@ -43,6 +47,7 @@ export function CreateNewAppointmentForm({
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
   })
+  // TODO render sendError
   const [sendError, setSendError] = useState<Error | undefined>()
   const { mutate, isPending } = useMutation({
     mutationFn: async (formValues: FormValues) => {
@@ -84,7 +89,7 @@ export function CreateNewAppointmentForm({
   return (
     <div className="flex w-full justify-center">
       <div className="w-80">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form>
           <div className="form-control w-full max-w-xs">
             <label className="label">
               <span className="label-text">Your timezone</span>
@@ -136,22 +141,19 @@ export function CreateNewAppointmentForm({
               )}
             </label>
           </div>
-
-          <div className="flex w-full justify-center">
-            <button
-              className="btn btn-primary"
-              type="submit"
-              disabled={isPending}
-            >
-              {isPending ? 'Sending...' : 'Send appointment request'}
-            </button>
-            {sendError?.message && (
-              <div className="text-error">
-                <span>{sendError?.message}</span>
-              </div>
-            )}
-          </div>
         </form>
+        <TelegramBackButton
+          onClick={() => {
+            reset()
+            onBackButtonClicked()
+          }}
+        />
+        <TelegramMainButton
+          progress={isPending}
+          disabled={Boolean(errors.email?.message)}
+          text={isPending ? 'Sending...' : 'Send appointment request'}
+          onClick={handleSubmit(onSubmit)}
+        />
       </div>
     </div>
   )

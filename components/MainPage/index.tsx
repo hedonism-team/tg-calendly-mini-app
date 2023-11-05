@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { WebAppUser } from '@twa-dev/types'
 
 import { TelegramEnvGuard } from '@/components/TelegramEnvGuard'
@@ -8,6 +8,7 @@ import { CreateNewAppointmentComponent } from '@/components/CreateNewAppointment
 import { CreateNewLinkComponent } from '@/components/CreateNewLink'
 import { WelcomeComponent } from '@/components/MainPage/WelcomeComponent'
 import { CreateNewUserPayload } from '@/app/api/users/route'
+import { ConfirmTimezoneComponent } from '@/components/MainPage/ConfirmTimezoneComponent'
 
 interface MainPageComponentProps {
   isProduction: boolean
@@ -20,9 +21,15 @@ export function MainPageComponent({
   defaultUserId,
   defaultStartParam,
 }: MainPageComponentProps) {
-  const [isClient, setIsClient] = useState(false)
+  function getDefaultTimezone() {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone
+  }
+
+  const [isClientSide, setIsClientSide] = useState(false)
   const [user, setUser] = useState<WebAppUser | undefined>()
   const [startParam, setStartParam] = useState<string | undefined>()
+  const [timezone, setTimezone] = React.useState<string | undefined>()
+  const [isTimezoneConfirmed, setIsTimezoneConfirmed] = useState<boolean>(false)
 
   // TODO remove
   if (!isProduction) {
@@ -37,14 +44,15 @@ export function MainPageComponent({
   }
 
   useEffect(() => {
-    setIsClient(true)
+    setIsClientSide(true)
+    setTimezone(getDefaultTimezone())
   }, [])
 
-  useCreateUser(user, isClient)
+  useEnsureUser(user, isClientSide)
 
   return (
     <div className="flex min-h-screen flex-col">
-      {isClient && (
+      {isClientSide && (
         <>
           {isProduction && (
             <TelegramEnvGuard
@@ -52,18 +60,33 @@ export function MainPageComponent({
               onStartParamDetected={setStartParam}
             />
           )}
-          {user && isDefaultMode(startParam) && (
+          {user && isWelcomeMode(startParam) && (
             <WelcomeComponent userId={user.id} />
           )}
-          {user && isCreateNewLinkMode(startParam) && (
-            <CreateNewLinkComponent userId={user.id} />
-          )}
-          {user && isCreateNewAppointmentMode(startParam) && (
-            <CreateNewAppointmentComponent
-              userId={user.id}
-              linkId={parseLinkId(startParam!)}
+          {user && !isTimezoneConfirmed && !isWelcomeMode(startParam) && (
+            <ConfirmTimezoneComponent
+              timezone={timezone!}
+              onTimezoneChanged={setTimezone}
+              onTimezoneConfirmed={() => setIsTimezoneConfirmed(true)}
             />
           )}
+          {user && isTimezoneConfirmed && isCreateNewLinkMode(startParam) && (
+            <CreateNewLinkComponent
+              userId={user.id}
+              timezone={timezone!}
+              onBackButtonClicked={() => setIsTimezoneConfirmed(false)}
+            />
+          )}
+          {user &&
+            isTimezoneConfirmed &&
+            isCreateNewAppointmentMode(startParam) && (
+              <CreateNewAppointmentComponent
+                userId={user.id}
+                linkId={parseLinkId(startParam!)}
+                timezone={timezone!}
+                onBackButtonClicked={() => setIsTimezoneConfirmed(false)}
+              />
+            )}
         </>
       )}
     </div>
@@ -72,7 +95,7 @@ export function MainPageComponent({
 
 // private
 
-function isDefaultMode(startParam: string | undefined) {
+function isWelcomeMode(startParam: string | undefined) {
   return startParam === ''
 }
 
@@ -88,7 +111,7 @@ function parseLinkId(startParam: string) {
   return startParam.slice(2)
 }
 
-function useCreateUser(user: WebAppUser | undefined, isClient: boolean) {
+function useEnsureUser(user: WebAppUser | undefined, isClientSide: boolean) {
   useEffect(() => {
     const createUser = async (user: WebAppUser) => {
       const requestData: CreateNewUserPayload = {
@@ -112,8 +135,8 @@ function useCreateUser(user: WebAppUser | undefined, isClient: boolean) {
       return response.json()
     }
 
-    if (user && isClient) {
+    if (user && isClientSide) {
       createUser(user).then(() => {})
     }
-  }, [user, isClient])
+  }, [user, isClientSide])
 }
