@@ -8,6 +8,8 @@ import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
 import { CreateNewAppointmentForm } from './Form'
 import { TelegramBackButton } from '@/components/TelegramBackButton'
 import { AppointmentCreationSuccess } from '@/components/CreateNewAppointment/AppointmentCreationSuccess'
+import { ErrorPage } from '@/components/ErrorPage'
+import { PageHeader } from '@/components/PageHeader'
 
 interface CreateNewAppointmentComponentProps {
   linkId: string
@@ -44,19 +46,20 @@ export function CreateNewAppointmentComponent({
     return date && timeSlot && !isAppointmentCreated
   }
 
-  // TODO remove
   if (!userId) {
-    return <div>NewAppointment: userId is not defined</div>
+    return (
+      <div className="flex-1">
+        <ErrorPage message={"We couldn't detect a Telegram user"} />
+      </div>
+    )
   }
 
   return (
     <div className="flex flex-col">
       {isDateTimeMode() && (
         <>
-          <div className="flex-1 border-b-white my-2">
-            <div className="flex w-full justify-center">
-              Choose suitable date and time slot
-            </div>
+          <div className="flex-1">
+            <PageHeader text={'Choose suitable date and time slot'} />
           </div>
 
           <div className="flex-1">
@@ -92,10 +95,8 @@ export function CreateNewAppointmentComponent({
 
       {isFormMode() && (
         <>
-          <div className="flex-1 border-b-white my-2">
-            <div className="flex w-full justify-center">
-              Confirm appointment details
-            </div>
+          <div className="flex-1">
+            <PageHeader text={'Confirm appointment details'} />
           </div>
           <div className="flex-1">
             <CreateNewAppointmentForm

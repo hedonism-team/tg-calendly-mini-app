@@ -3,6 +3,8 @@ import { CreateNewLinkForm } from './Form'
 import { ScheduleComponent } from './Schedule/ScheduleComponent'
 import { ScheduleModel } from '@/lib/models/Schedule.model'
 import { LinkCreationSuccess } from '@/components/CreateNewLink/LinkCreationSuccess'
+import { PageHeader } from '@/components/PageHeader'
+import { ErrorPage } from '@/components/ErrorPage'
 
 interface CreateNewLinkComponentProps {
   userId: number | undefined
@@ -26,19 +28,20 @@ export function CreateNewLinkComponent({
     return schedule && !isLinkCreated
   }
 
-  // TODO remove
   if (!userId) {
-    return <div>NewLink: userId is not defined</div>
+    return (
+      <div className="flex-1">
+        <ErrorPage message={"We couldn't detect a Telegram user"} />
+      </div>
+    )
   }
 
   return (
     <div className="flex flex-col">
       {isScheduleMode() && (
         <>
-          <div className="flex-1 border-b-white my-2">
-            <div className="flex w-full justify-center">
-              Choose the time available for booking
-            </div>
+          <div className="flex-1">
+            <PageHeader text={'Choose the time available for booking'} />
           </div>
           <div className="flex-1">
             <ScheduleComponent
@@ -51,10 +54,8 @@ export function CreateNewLinkComponent({
 
       {isFormMode() && (
         <>
-          <div className="flex-1 border-b-white my-2">
-            <div className="flex w-full justify-center">
-              Choose the duration of any further bookings
-            </div>
+          <div className="flex-1 my-2">
+            <PageHeader text={'Choose the duration of any further bookings'} />
           </div>
           <div className="flex-1">
             <CreateNewLinkForm

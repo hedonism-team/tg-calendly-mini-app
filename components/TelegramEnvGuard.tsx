@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Telegram, WebAppUser } from '@twa-dev/types'
+import { ErrorPage } from '@/components/ErrorPage'
 
 interface TelegramUserIdProps {
   onUserDetected: (user: WebAppUser) => void
@@ -27,6 +28,6 @@ export function TelegramEnvGuard({
   }
 
   if (!telegramUser) {
-    return <div>You opened this page outside Telegram!!!</div>
+    return <ErrorPage message={'You opened this page outside Telegram!'} />
   }
 }
