@@ -2,12 +2,9 @@ import { range } from 'lodash'
 import React, { useState } from 'react'
 
 import { TimeSlotDuration } from '@/lib/models/Link.model'
-import { TelegramBackButton } from '@/components/TelegramBackButton'
-import { TelegramMainButton } from '@/components/TelegramMainButton'
 
 interface DurationSelectorProps {
-  onDurationSelected: (duration: TimeSlotDuration) => void
-  onBackButtonClicked: () => void
+  onDurationUpdated: (duration: TimeSlotDuration) => void
 }
 
 const allHours = range(0, 6)
@@ -15,10 +12,7 @@ const allMinutes = range(0, 60, 15)
 const defaultDurationHours = 1
 const defaultDurationMinutes = 0
 
-export function DurationSelector({
-  onDurationSelected,
-  onBackButtonClicked,
-}: DurationSelectorProps) {
+export function DurationSelector({ onDurationUpdated }: DurationSelectorProps) {
   const [durationHours, setDurationHours] = useState<number | undefined>(
     defaultDurationHours
   )
@@ -40,6 +34,7 @@ export function DurationSelector({
             onChange={(e) => {
               const hours = Number(e.target.value)
               setDurationHours(hours)
+              onDurationUpdated({ hours, minutes: durationMinutes! })
             }}
           >
             {allHours.map((hours) => (
@@ -60,6 +55,7 @@ export function DurationSelector({
             onChange={(e) => {
               const minutes = Number(e.target.value)
               setDurationMinutes(minutes)
+              onDurationUpdated({ hours: durationHours!, minutes })
             }}
           >
             {allMinutes.map((minutes) => (
@@ -70,24 +66,6 @@ export function DurationSelector({
           </select>
         </div>
       </div>
-
-      <TelegramBackButton
-        onClick={() => {
-          setDurationHours(undefined)
-          setDurationMinutes(undefined)
-          onBackButtonClicked()
-        }}
-      />
-      <TelegramMainButton
-        text={'Save appointment duration'}
-        disabled={durationHours === undefined || durationMinutes === undefined}
-        onClick={() =>
-          onDurationSelected({
-            hours: durationHours!,
-            minutes: durationMinutes!,
-          })
-        }
-      />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 
 import { TimeSlotDuration } from '@/lib/models/Link.model'
@@ -6,11 +6,11 @@ import { ScheduleModel } from '@/lib/models/Schedule.model'
 import { TelegramBackButton } from '@/components/TelegramBackButton'
 import { TelegramMainButton } from '@/components/TelegramMainButton'
 import { CreateNewLinkPayload } from '@/app/api/links/route'
+import { DurationSelector } from '@/components/CreateNewLink/DurationSelector'
 
 interface CreateNewLinkFormProps {
   userId: number
   timezone: string
-  duration: TimeSlotDuration
   schedule: ScheduleModel
   onLinkCreated: () => void
   onBackButtonClicked: () => void
@@ -19,18 +19,18 @@ interface CreateNewLinkFormProps {
 export function CreateNewLinkForm({
   userId,
   timezone,
-  duration,
   schedule,
   onLinkCreated,
   onBackButtonClicked,
 }: CreateNewLinkFormProps) {
+  const [duration, setDuration] = useState<TimeSlotDuration | undefined>()
   const { mutate, isPending, error } = useMutation({
     mutationFn: async () => {
       const requestData: CreateNewLinkPayload = {
         link: {
           userId,
           timezone,
-          duration,
+          duration: duration!,
         },
         schedule,
       }
@@ -55,13 +55,17 @@ export function CreateNewLinkForm({
 
   return (
     <div>
-      <div>{JSON.stringify(duration)}</div>
-      <div>{JSON.stringify(schedule)}</div>
+      <div>{JSON.stringify(duration, null, 2)}</div>
+      <div>{JSON.stringify(schedule, null, 2)}</div>
       <form>
+        <DurationSelector
+          onDurationUpdated={setDuration}
+        />
         {error && <span className="text-error">{error?.message}</span>}
         <TelegramMainButton
-          text={isPending ? 'Creating...' : 'Create link'}
+          disabled={!duration}
           progress={isPending}
+          text={isPending ? 'Creating...' : 'Create link'}
           onClick={() => {
             console.log('handleSubmit')
             mutate()

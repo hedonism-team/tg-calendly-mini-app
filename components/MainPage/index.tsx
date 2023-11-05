@@ -41,6 +41,9 @@ export function MainPageComponent({
       console.log('default startParam', defaultStartParam)
       setStartParam(defaultStartParam)
     }
+    if (!isTimezoneConfirmed) {
+      setIsTimezoneConfirmed(true)
+    }
   }
 
   useEffect(() => {

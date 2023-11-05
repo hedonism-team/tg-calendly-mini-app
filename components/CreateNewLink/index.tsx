@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
-
-import { TimeSlotDuration } from '@/lib/models/Link.model'
 import { CreateNewLinkForm } from './Form'
-import { DurationSelector } from './DurationSelector'
-import { ScheduleComponent } from './ScheduleComponent'
+import { ScheduleComponent } from './Schedule/ScheduleComponent'
 import { ScheduleModel } from '@/lib/models/Schedule.model'
 
 interface CreateNewLinkComponentProps {
@@ -17,20 +14,15 @@ export function CreateNewLinkComponent({
   timezone,
   onBackButtonClicked,
 }: CreateNewLinkComponentProps) {
-  const [duration, setDuration] = useState<TimeSlotDuration | undefined>()
   const [schedule, setSchedule] = useState<ScheduleModel | undefined>()
   const [isLinkCreated, setIsLinkCreated] = useState<boolean | undefined>()
 
-  function isDurationMode() {
-    return !duration
-  }
-
   function isScheduleMode() {
-    return duration && !schedule
+    return !schedule
   }
 
   function isFormMode() {
-    return duration && schedule && !isLinkCreated
+    return schedule && !isLinkCreated
   }
 
   // TODO remove
@@ -44,22 +36,11 @@ export function CreateNewLinkComponent({
         <div className="flex w-full justify-center">HEADER</div>
       </div>
 
-      {isDurationMode() && (
-        <div className="flex-1">
-          <DurationSelector
-            onDurationSelected={setDuration}
-            onBackButtonClicked={onBackButtonClicked}
-          />
-        </div>
-      )}
-
       {isScheduleMode() && (
         <div className="flex-1">
           <ScheduleComponent
             onScheduleSelected={setSchedule}
-            onBackButtonClicked={() => {
-              setDuration(undefined)
-            }}
+            onBackButtonClicked={onBackButtonClicked}
           />
         </div>
       )}
@@ -69,7 +50,6 @@ export function CreateNewLinkComponent({
           <CreateNewLinkForm
             userId={userId}
             timezone={timezone}
-            duration={duration!}
             schedule={schedule!}
             onLinkCreated={() => {
               setIsLinkCreated(true)
