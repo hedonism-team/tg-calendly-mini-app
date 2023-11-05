@@ -33,8 +33,24 @@ export function WelcomeComponent({ tgUser }: WelcomeComponentProps) {
 
   return (
     <>
-      <div>Welcome to Meetly</div>
-      {user && <div>We are glad to welcome you ${getUserNickname(user)}</div>}
+      <div className="text-accent font-bold text-lg">Welcome to Meetly</div>
+      {user && (
+        <div>
+          <h1 className="text-primary">
+            We are glad to welcome you {getUserNickname(user)}
+          </h1>
+          <span className="text-primary">
+            Create your personal link
+            <a href={getCreateNewLinkPageUrl()}>
+              <button className="btn">here</button>
+            </a>
+          </span>
+        </div>
+      )}
     </>
   )
+}
+
+function getCreateNewLinkPageUrl() {
+  return 'https://t.me/meetly_bot/app?startapp=new'
 }
