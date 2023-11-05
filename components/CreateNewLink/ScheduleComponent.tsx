@@ -112,6 +112,10 @@ function getUpdatedSchedule(
   if (!workingHours) {
     result[weekday] = null
   } else {
+    if (!result[weekday]) {
+      // @ts-ignore
+      result[weekday] = {}
+    }
     if (workingHours.startTime) {
       result[weekday]!.startTime = workingHours.startTime
     }
