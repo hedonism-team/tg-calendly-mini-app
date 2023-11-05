@@ -6,9 +6,9 @@ import { WebAppUser } from '@twa-dev/types'
 import { TelegramEnvGuard } from '@/components/TelegramEnvGuard'
 import { CreateNewAppointmentComponent } from '@/components/CreateNewAppointment'
 import { CreateNewLinkComponent } from '@/components/CreateNewLink'
-import { WelcomeComponent } from '@/components/MainPage/WelcomeComponent'
-import { CreateNewUserPayload } from '@/app/api/users/route'
 import { ConfirmTimezoneComponent } from '@/components/MainPage/ConfirmTimezoneComponent'
+import { WelcomeComponent } from '@/components/WelcomePage'
+import { CreateNewUserPayload } from '@/app/api/users/route'
 
 interface MainPageComponentProps {
   isProduction: boolean
@@ -64,7 +64,7 @@ export function MainPageComponent({
             />
           )}
           {user && isWelcomeMode(startParam) && (
-            <WelcomeComponent userId={user.id} />
+            <WelcomeComponent tgUser={user} />
           )}
           {user && !isTimezoneConfirmed && !isWelcomeMode(startParam) && (
             <ConfirmTimezoneComponent

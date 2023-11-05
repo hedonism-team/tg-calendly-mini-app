@@ -47,7 +47,6 @@ export function CreateNewAppointmentForm({
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
   })
-  // TODO render sendError
   const [sendError, setSendError] = useState<Error | undefined>()
   const { mutate, isPending } = useMutation({
     mutationFn: async (formValues: FormValues) => {
@@ -80,8 +79,7 @@ export function CreateNewAppointmentForm({
       onAppointmentCreated()
     },
     onError: async (e) => {
-      // TODO already booked & internal error
-      setSendError(e)
+      setSendError(e) // N.B. already booked & internal error
     },
   })
   const onSubmit: SubmitHandler<FormValues> = (data) => mutate(data)
