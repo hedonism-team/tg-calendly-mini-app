@@ -72,7 +72,5 @@ model Appointment {
   requestingUser     User    @relation("requestingUser", fields: [requestingUserId], references: [id])
   user               User    @relation("user", fields: [userId], references: [id])
 
-  @@unique([userId, date, timeSlotStartTime])
-  @@unique([requestingUserId, date, timeSlotStartTime])
   @@map("appointments")
 }
