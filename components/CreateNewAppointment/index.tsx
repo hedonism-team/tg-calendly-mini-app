@@ -3,6 +3,7 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import { useQueryClient } from '@tanstack/react-query'
+import { BackButton } from '@twa-dev/sdk/dist/react'
 
 import { ShiftedTimeSlot } from '@/lib/models/Appointment.model'
 import { Calendar } from './Calendar'
@@ -33,6 +34,9 @@ export function CreateNewAppointmentComponent({
   const [timezone, setTimezone] = React.useState<string>(getDefaultTimezone())
   const [date, setDate] = React.useState<Date | undefined>(dayjs().toDate())
   const [timeSlot, setTimeSlot] = React.useState<ShiftedTimeSlot | undefined>()
+  const [isAppointmentCreated, setIsAppointmentCreated] = React.useState<
+    boolean | undefined
+  >()
 
   function isFormMode() {
     return timezone && date && timeSlot
@@ -99,8 +103,14 @@ export function CreateNewAppointmentComponent({
             onAppointmentCreated={async () => {
               setTimeSlot(undefined)
               await queryClient.invalidateQueries()
+              setIsAppointmentCreated(true)
             }}
           />
+        </div>
+      )}
+      {isAppointmentCreated && (
+        <div className="flex-1">
+          <BackButton />
         </div>
       )}
     </div>
