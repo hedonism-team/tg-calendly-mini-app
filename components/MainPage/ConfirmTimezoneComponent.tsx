@@ -15,12 +15,12 @@ export function ConfirmTimezoneComponent({
   onTimezoneConfirmed,
 }: ConfirmTimezoneComponentProps) {
   return (
-    <>
+    <div className="flex flex-col">
       <div className="flex-1">
         <PageHeader text={'Confirm your timezone'} />
       </div>
       <div className="flex-1">
-        <div className="flex w-full mt-8 justify-center">
+        <div className="flex w-full mt-36 justify-center">
           <div className="w-80">
             <TimezoneSelectorComponent
               timezone={timezone!}
@@ -33,6 +33,6 @@ export function ConfirmTimezoneComponent({
           />
         </div>
       </div>
-    </>
+    </div>
   )
 }

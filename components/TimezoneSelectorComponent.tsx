@@ -1,5 +1,5 @@
 import React from 'react'
-import TimezoneSelect from 'react-timezone-select'
+import { TimezoneSelector } from '@/components/TimezoneSelector'
 
 interface TimezoneSelectorComponentProps {
   timezone: string
@@ -11,7 +11,7 @@ export function TimezoneSelectorComponent({
   onTimezoneChanged,
 }: TimezoneSelectorComponentProps) {
   return (
-    <TimezoneSelect
+    <TimezoneSelector
       value={timezone}
       onChange={(option) => {
         onTimezoneChanged(option.value)
