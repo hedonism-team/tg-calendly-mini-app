@@ -59,6 +59,7 @@ export function ScheduleComponent({
                           ? { startTime: value }
                           : { finishTime: value }
                       )
+                      console.log('updatedSchedule', updatedSchedule)
                       setSchedule(updatedSchedule)
                     }}
                   >

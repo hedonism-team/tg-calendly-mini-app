@@ -27,6 +27,8 @@ export function DurationSelector({
             <span className="label-text">Hours</span>
           </label>
           <select
+            defaultValue={undefined}
+            required={true}
             className="select select-sm select-bordered max-w-xs"
             onChange={(e) => {
               const hours = Number(e.target.value)
@@ -45,6 +47,8 @@ export function DurationSelector({
             <span className="label-text">Minutes</span>
           </label>
           <select
+            defaultValue={undefined}
+            required={true}
             className="select select-sm select-bordered max-w-xs"
             onChange={(e) => {
               const minutes = Number(e.target.value)
@@ -80,5 +84,3 @@ export function DurationSelector({
     </div>
   )
 }
-
-// private
