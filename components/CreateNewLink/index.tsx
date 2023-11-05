@@ -9,7 +9,6 @@ import { DurationSelector } from './DurationSelector'
 import { ScheduleComponent } from './ScheduleComponent'
 import { LinkIdPicker } from './LinkIdPicker'
 import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
-import { TelegramMainButton } from '@/components/TelegramMainButton'
 
 interface CreateNewLinkComponentProps {
   userId: number | undefined
@@ -80,8 +79,6 @@ export function CreateNewLinkComponent({
           )}
         </div>
       </div>
-
-      <TelegramMainButton />
     </>
   )
 }
