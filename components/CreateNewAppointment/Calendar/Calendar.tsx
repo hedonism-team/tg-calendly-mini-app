@@ -1,7 +1,7 @@
 import React from 'react'
 import { DayPicker } from 'react-day-picker'
-import { format } from 'date-fns'
 import 'react-day-picker/dist/style.css'
+import './style.css'
 import dayjs from 'dayjs'
 
 export interface CalendarProps {
@@ -10,12 +10,6 @@ export interface CalendarProps {
 }
 
 export function Calendar({ date, onDateSelected }: CalendarProps) {
-  // TODO: remove footer
-  let footer = <p>Please pick a day.</p>
-  if (date) {
-    footer = <p>You picked {format(date, 'PP')}.</p>
-  }
-
   const disabledDays = [
     {
       from: dayjs().subtract(50, 'years').toDate(),
@@ -28,7 +22,6 @@ export function Calendar({ date, onDateSelected }: CalendarProps) {
       mode="single"
       selected={date}
       onSelect={onDateSelected}
-      // footer={footer}
       disabled={disabledDays}
     />
   )

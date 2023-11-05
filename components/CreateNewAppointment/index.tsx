@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { ShiftedTimeSlot } from '@/lib/models/Appointment.model'
-import { Calendar } from './Calendar'
+import { Calendar } from './Calendar/Calendar'
 import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
 import { CreateNewAppointmentForm } from './Form'
 import { TelegramBackButton } from '@/components/TelegramBackButton'
