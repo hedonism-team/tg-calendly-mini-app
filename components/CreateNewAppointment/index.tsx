@@ -10,6 +10,7 @@ import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
 import { CreateNewAppointmentForm } from './Form'
 import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
 import { TelegramBackButton } from '@/components/TelegramBackButton'
+import { TelegramMainButton } from '@/components/TelegramMainButton'
 
 interface CreateNewAppointmentComponentProps {
   linkId: string
@@ -110,6 +111,7 @@ export function CreateNewAppointmentComponent({
       )}
       {isAppointmentCreated && (
         <div className="flex-1">
+          <TelegramMainButton />
           <TelegramBackButton />
         </div>
       )}

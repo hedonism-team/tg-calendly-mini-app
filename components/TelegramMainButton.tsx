@@ -20,7 +20,7 @@ export function TelegramMainButton() {
   return (
     <>
       {typeof window !== 'undefined' && (
-        <MainButton text="Submit" onClick={() => alert('submitted')} />
+        <MainButton text="Submit" onClick={() => alert('MainButton')} />
       )}
     </>
   )
