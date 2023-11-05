@@ -2,15 +2,24 @@ import React from 'react'
 import { MainButton } from '@twa-dev/sdk/dist/react'
 
 interface TelegramMainButtonProps {
-  text: string
   onClick: () => void
+  text?: string
+  disabled?: boolean
 }
 
-export function TelegramMainButton({ onClick, text }: TelegramMainButtonProps) {
+export function TelegramMainButton({
+  onClick,
+  text,
+  disabled,
+}: TelegramMainButtonProps) {
   return (
     <>
       {typeof window !== 'undefined' && (
-        <MainButton text={text} onClick={onClick} />
+        <MainButton
+          disabled={disabled ?? false}
+          text={text ?? 'OK'}
+          onClick={onClick}
+        />
       )}
     </>
   )

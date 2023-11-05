@@ -4,15 +4,20 @@ import { LinkModel } from '@/lib/models/Link.model'
 import {
   createNewSchedule,
   mapDbScheduleToModel,
+  mapScheduleModelToDbInstance,
 } from '@/lib/services/schedules.service'
 import { createOrUpdateUser } from '@/lib/services/users.service'
+import { ScheduleModel } from '@/lib/models/Schedule.model'
 
 export async function createNewLink(
   { id, userId, timezone, duration }: LinkModel,
-  schedule: Schedule
+  schedule: ScheduleModel
 ) {
   await createOrUpdateUser({ id: userId })
-  const scheduleInstance = await createNewSchedule(schedule)
+  const scheduleInstance = await createNewSchedule(
+    mapScheduleModelToDbInstance(schedule)
+  )
+  console.log('schedule created', scheduleInstance)
   return mapDbInstanceToModel(
     await prisma.link.create({
       data: {
@@ -51,7 +56,7 @@ export async function getLinkById(
 function mapDbInstanceToModel(
   { id, userId, timezone, durationHours, durationMinutes }: Link,
   dbSchedule: Schedule | null
-) {
+): LinkModel {
   const model: LinkModel = {
     id,
     userId: Number.parseInt(userId.toString()),
@@ -66,7 +71,3 @@ function mapDbInstanceToModel(
   }
   return model
 }
-
-// function mapScheduleModelToDbInstance(schedule: ScheduleType) {
-//   const weekdayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-// }

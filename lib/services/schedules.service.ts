@@ -1,13 +1,14 @@
 import { Schedule } from '@prisma/client'
-import { DayOfWeek, ScheduleType } from '@/lib/models/Schedule.model'
+import { DayOfWeek, ScheduleModel } from '@/lib/models/Schedule.model'
 import prisma from '@/lib/prisma'
+import { getWeekdayNames } from '@/lib/utils/weekdays'
 
 export async function createNewSchedule(schedule: Schedule) {
   return prisma.schedule.create({
     data: schedule,
   })
 }
-
+// TODO refactor
 export function mapDbScheduleToModel({
   mondayStartTime,
   mondayFinishTime,
@@ -61,7 +62,7 @@ export function mapDbScheduleToModel({
       finish: sundayFinishTime,
     },
   ]
-  const schedule: ScheduleType = {
+  const schedule: ScheduleModel = {
     [DayOfWeek.Monday]: null,
     [DayOfWeek.Tuesday]: null,
     [DayOfWeek.Wednesday]: null,
@@ -83,4 +84,28 @@ export function mapDbScheduleToModel({
 
 function isNotNull(value: string | null): value is string {
   return typeof value === 'string'
+}
+
+export function mapScheduleModelToDbInstance(
+  schedule: ScheduleModel
+): Schedule {
+  const weekdayNames = getWeekdayNames({ firstLetterUpperCased: false })
+  return weekdayNames.reduce((previousValue, weekdayName, weekdayIndex) => {
+    const dayOfWeek: DayOfWeek = weekdayIndex
+    const startTimeField = `${weekdayName}StartTime` as keyof Schedule
+    const finishTimeField = `${weekdayName}FinishTime` as keyof Schedule
+    if (!schedule[dayOfWeek]) {
+      // @ts-ignore
+      previousValue[startTimeField] = null
+      // @ts-ignore
+      previousValue[finishTimeField] = null
+    } else {
+      const { startTime, finishTime } = schedule[weekdayIndex as DayOfWeek]!
+      // @ts-ignore
+      previousValue[startTimeField] = startTime
+      // @ts-ignore
+      previousValue[finishTimeField] = finishTime
+    }
+    return previousValue
+  }, {} as Schedule)
 }

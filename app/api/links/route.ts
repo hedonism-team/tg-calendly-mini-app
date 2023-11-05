@@ -5,12 +5,11 @@ import { LinkModel } from '@/lib/models/Link.model'
 import { createNewLink } from '@/lib/services/links.service'
 
 export interface CreateNewLinkPayload {
-  link: Omit<LinkModel, 'schedule'>
+  link: Omit<LinkModel, 'schedule' | 'id'>
   schedule: Schedule
 }
 
 export async function POST(request: NextRequest) {
-  // TODO validate data as CreateNewLinkPayload
   const data = await request.json()
   try {
     const link = await createNewLink(data.link, data.schedule)

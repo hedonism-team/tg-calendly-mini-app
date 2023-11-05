@@ -1,6 +1,6 @@
-import { ScheduleType } from '@/lib/models/Schedule.model'
+import { ScheduleModel } from '@/lib/models/Schedule.model'
 
-export function fakeSchedule(overrides: Partial<ScheduleType> = {}) {
+export function fakeSchedule(overrides: Partial<ScheduleModel> = {}) {
   return {
     0: {
       startTime: '09:00',
@@ -25,5 +25,5 @@ export function fakeSchedule(overrides: Partial<ScheduleType> = {}) {
     5: null,
     6: null,
     ...overrides,
-  } as ScheduleType
+  } as ScheduleModel
 }

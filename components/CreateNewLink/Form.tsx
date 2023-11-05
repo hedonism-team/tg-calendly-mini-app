@@ -1,15 +1,25 @@
 import { TimeSlotDuration } from '@/lib/models/Link.model'
-import { Schedule } from '@prisma/client'
+import { ScheduleModel } from '@/lib/models/Schedule.model'
+import React from 'react'
 
 interface CreateNewLinkFormProps {
-  linkId: string
   userId: number
   timezone: string
   duration: TimeSlotDuration
-  schedule: Schedule
+  schedule: ScheduleModel
   onLinkCreated: () => void
 }
 
-export function CreateNewLinkForm({}: CreateNewLinkFormProps) {
-  return <div></div>
+export function CreateNewLinkForm({
+  userId,
+  timezone,
+  duration,
+  schedule,
+}: CreateNewLinkFormProps) {
+  return (
+    <div>
+      <div>{JSON.stringify(duration)}</div>
+      <div>{JSON.stringify(schedule)}</div>
+    </div>
+  )
 }

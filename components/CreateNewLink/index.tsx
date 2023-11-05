@@ -1,14 +1,13 @@
 'use client'
 
-import React from 'react'
-import { Schedule } from '@prisma/client'
+import React, { useState } from 'react'
 
 import { TimeSlotDuration } from '@/lib/models/Link.model'
 import { CreateNewLinkForm } from './Form'
 import { DurationSelector } from './DurationSelector'
 import { ScheduleComponent } from './ScheduleComponent'
-import { LinkIdPicker } from './LinkIdPicker'
 import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
+import { ScheduleModel } from '@/lib/models/Schedule.model'
 
 interface CreateNewLinkComponentProps {
   userId: number | undefined
@@ -20,65 +19,83 @@ export function CreateNewLinkComponent({
   function getDefaultTimezone() {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
   }
-  const [timezone, setTimezone] = React.useState<string>(getDefaultTimezone())
-  const [duration, setDuration] = React.useState<TimeSlotDuration>({
-    hours: 1,
-    minutes: 0,
-  })
-  const [schedule, setSchedule] = React.useState<Schedule | undefined>()
-  const [linkId, setLinkId] = React.useState<string | undefined>()
+  const [timezone, setTimezone] = useState<string>(getDefaultTimezone())
+  const [duration, setDuration] = useState<TimeSlotDuration | undefined>()
+  const [schedule, setSchedule] = useState<ScheduleModel | undefined>()
+  const [isLinkCreated, setIsLinkCreated] = useState<boolean | undefined>()
+
+  function isDurationMode() {
+    return !duration
+  }
+
+  function isScheduleMode() {
+    return duration && !schedule
+  }
+
+  function isFormMode() {
+    return duration && schedule
+  }
 
   if (!userId) {
     return <div>NewLink: userId is not defined</div>
   }
 
   return (
-    <>
-      <div className="grid grid-flow-row sm:max-w-sm xs:max-w-xs">
-        <div className="flex-1">
-          <TimezoneSelectorComponent
-            timezone={timezone}
-            onTimezoneChanged={setTimezone}
-          />
-        </div>
+    <div className="flex flex-col">
+      <div className="flex-1 border-b-white my-2">
+        <div className="flex w-full justify-center">HEADER</div>
+      </div>
 
+      {isDurationMode() && (
+        <>
+          <div className="flex-1 my-2">
+            <div className="flex w-full justify-center">
+              <div className="w-80">
+                <TimezoneSelectorComponent
+                  timezone={timezone}
+                  onTimezoneChanged={setTimezone}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1">
+            <DurationSelector
+              onDurationSelected={setDuration}
+              onBackButtonClicked={() => {
+                setDuration(undefined)
+              }}
+            />
+          </div>
+        </>
+      )}
+
+      {isScheduleMode() && (
         <div className="flex-1">
           <ScheduleComponent
-            schedule={schedule}
-            onScheduleUpdated={setSchedule}
+            onScheduleSelected={setSchedule}
+            onBackButtonClicked={() => {
+              setSchedule(undefined)
+            }}
           />
         </div>
+      )}
 
+      {isFormMode() && (
         <div className="flex-1">
-          <DurationSelector
-            duration={duration}
-            onDurationSelected={setDuration}
+          <CreateNewLinkForm
+            userId={userId}
+            timezone={timezone}
+            duration={duration!}
+            schedule={schedule!}
+            onLinkCreated={() => {
+              setIsLinkCreated(true)
+            }}
           />
         </div>
+      )}
 
-        {duration && (
-          <p className="flex-1 text-red-600">
-            Selected slot duration: {duration.hours}h {duration.minutes}m
-          </p>
-        )}
-
-        <div className="flex-1">
-          <LinkIdPicker />
-        </div>
-
-        <div className="flex-1">
-          {duration && schedule && linkId && (
-            <CreateNewLinkForm
-              linkId={linkId}
-              userId={userId}
-              timezone={timezone}
-              duration={duration}
-              schedule={schedule}
-              onLinkCreated={() => {}}
-            />
-          )}
-        </div>
-      </div>
-    </>
+      {isLinkCreated && <div>Success! Link has been created!s</div>}
+    </div>
   )
 }

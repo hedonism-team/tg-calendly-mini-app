@@ -1,12 +1,11 @@
-import { ScheduleType } from '@/lib/models/Schedule.model'
+import { ScheduleModel } from '@/lib/models/Schedule.model'
 
 export interface LinkModel {
   id: string
   userId: number
   timezone: string
-  // dateRange
   duration: TimeSlotDuration
-  schedule?: ScheduleType
+  schedule?: ScheduleModel
 }
 
 export interface TimeSlotDuration {

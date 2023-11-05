@@ -82,8 +82,8 @@ export function FreeTimeSlotsComponent({
 
   return (
     // max-h-56 overflow-y-scroll
-    <div className="flex w-full justify-center ">
-      <div className="flex flex-wrap w-80 justify-start">
+    <div className="flex w-full justify-center">
+      <div className="flex flex-wrap w-80">
         {data.map((timeSlot) => (
           <div key={timeSlot.startTime} className="flex m-2 justify-center">
             <div

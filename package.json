@@ -20,6 +20,7 @@
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.10",
     "grammy": "^1.19.2",
+    "lodash": "^4.17.21",
     "next": "14.0.1",
     "query-string": "^8.1.0",
     "react": "^18",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.0.5",
+    "@types/lodash": "^4.14.200",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

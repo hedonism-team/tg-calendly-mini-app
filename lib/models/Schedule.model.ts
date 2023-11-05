@@ -8,7 +8,7 @@ export enum DayOfWeek {
   Sunday,
 }
 
-export interface ScheduleType extends Record<DayOfWeek, WorkingHoursRange | null> {}
+export interface ScheduleModel extends Record<DayOfWeek, WorkingHoursRange | null> {}
 
 export interface WorkingHoursRange {
   startTime: string // "HH:mm" string in the schedule creator's timezone

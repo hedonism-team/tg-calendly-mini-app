@@ -6,7 +6,7 @@ import isBetween from 'dayjs/plugin/isBetween'
 
 import { LinkModel, TimeSlotDuration } from '@/lib/models/Link.model'
 import { getAllUserAppointmentsForDate } from '@/lib/services/appointments.service'
-import { DayOfWeek, ScheduleType } from '@/lib/models/Schedule.model'
+import { DayOfWeek, ScheduleModel } from '@/lib/models/Schedule.model'
 import {
   AppointmentModel,
   ShiftedTimeSlot,
@@ -57,16 +57,13 @@ export async function getFreeTimeSlotsForRange(
     link.timezone,
     link.schedule
   )
-  console.log('allTimeSlots', JSON.stringify(allTimeSlots, null, 2))
-  const freeTimeSlots = getFreeTimeSlots(
+  return getFreeTimeSlots(
     allTimeSlots,
     existingAppointments,
     link.timezone,
     requestRange,
     requesterTimezone
   )
-  console.log('freeTimeSlots', JSON.stringify(freeTimeSlots, null, 2))
-  return freeTimeSlots
 }
 
 // private
@@ -80,7 +77,7 @@ function getAllTimeSlots(
   { start }: DateRange,
   duration: TimeSlotDuration,
   timezone: string, // host timezone
-  schedule?: ScheduleType
+  schedule?: ScheduleModel
 ) {
   if (!schedule) {
     return []
@@ -104,7 +101,7 @@ function getAllTimeSlots(
 function getOneDaySlots(
   dayOfWeek: DayOfWeek,
   duration: TimeSlotDuration,
-  schedule: ScheduleType
+  schedule: ScheduleModel
 ) {
   const dayTimeSlots: TimeSlot[] = []
   const workingHoursRange = schedule[dayOfWeek]
