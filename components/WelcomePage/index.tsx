@@ -32,22 +32,32 @@ export function WelcomeComponent({ tgUser }: WelcomeComponentProps) {
   }, [tgUser.id, wrappedSetUser])
 
   return (
-    <>
-      <div className="text-accent font-bold text-lg">Welcome to Meetly</div>
-      {user && (
-        <div>
-          <h1 className="text-primary">
-            We are glad to welcome you {getUserNickname(user)}
-          </h1>
-          <span className="text-primary">
-            Create your personal link
-            <a href={getCreateNewLinkPageUrl()}>
-              <button className="btn">here</button>
-            </a>
-          </span>
+    <div className="hero min-h-screen bg-base-200">
+      <div className="hero-content w-80 text-center">
+        <div className="max-w-md">
+          <h1 className="text-5xl font-bold">Hi there! 🙂</h1>
+          <div className="py-6">
+            {!user && (
+              <span className="loading loading-spinner text-accent"></span>
+            )}
+            {user && (
+              <div>
+                <h1 className="">
+                  We are glad to welcome you
+                  <kbd className="kbd kbd-md">{getUserNickname(user)}</kbd>
+                </h1>
+                <p className="">
+                  Create your personal link to start getting book requests
+                </p>
+              </div>
+            )}
+          </div>
+          <a href={getCreateNewLinkPageUrl()}>
+            <button className="btn btn-primary">Create a link</button>
+          </a>
         </div>
-      )}
-    </>
+      </div>
+    </div>
   )
 }
 
