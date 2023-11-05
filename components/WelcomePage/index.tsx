@@ -42,13 +42,15 @@ export function WelcomeComponent({ tgUser }: WelcomeComponentProps) {
             )}
             {user && (
               <div>
-                <h1 className="">
+                <h1 className="font-bold">
                   We are glad to welcome you
                   <kbd className="kbd kbd-md">{getUserNickname(user)}</kbd>
                 </h1>
-                <p className="">
-                  Create your personal link to start getting book requests
-                </p>
+                <div className="mt-4">
+                  <p>
+                    Create your personal link to start getting book requests
+                  </p>
+                </div>
               </div>
             )}
           </div>
