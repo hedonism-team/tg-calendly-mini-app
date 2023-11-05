@@ -9,7 +9,7 @@ interface DurationSelectorProps {
   onBackButtonClicked: () => void
 }
 
-const allHours = range(0, 24)
+const allHours = range(0, 6)
 const allMinutes = range(0, 60, 15)
 
 export function DurationSelector({
