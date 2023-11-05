@@ -3,13 +3,13 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import { useQueryClient } from '@tanstack/react-query'
-import { BackButton } from '@twa-dev/sdk/dist/react'
 
 import { ShiftedTimeSlot } from '@/lib/models/Appointment.model'
 import { Calendar } from './Calendar'
 import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
 import { CreateNewAppointmentForm } from './Form'
 import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
+import { TelegramBackButton } from '@/components/TelegramBackButton'
 
 interface CreateNewAppointmentComponentProps {
   linkId: string
@@ -110,7 +110,7 @@ export function CreateNewAppointmentComponent({
       )}
       {isAppointmentCreated && (
         <div className="flex-1">
-          <BackButton />
+          <TelegramBackButton />
         </div>
       )}
     </div>
