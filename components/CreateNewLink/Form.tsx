@@ -73,7 +73,7 @@ export function CreateNewLinkForm({
         {error && <span className="text-error">{error?.message}</span>}
         <TelegramMainButton
           progress={isPending}
-          disabled={isDurationSelected(duration)}
+          disabled={!isDurationSelected(duration)}
           text={isPending ? 'Creating...' : 'Create link'}
           onClick={() => {
             mutate()
