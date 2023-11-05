@@ -5,6 +5,7 @@ interface TelegramMainButtonProps {
   onClick: () => void
   text?: string
   disabled?: boolean
+  type?: string
 }
 
 export function TelegramMainButton({

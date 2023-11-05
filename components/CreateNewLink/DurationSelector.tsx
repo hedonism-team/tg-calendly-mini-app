@@ -60,13 +60,13 @@ export function DurationSelector({
         </div>
       </div>
 
-      {/*<TelegramBackButton*/}
-      {/*  onClick={() => {*/}
-      {/*    setDurationHours(undefined)*/}
-      {/*    setDurationMinutes(undefined)*/}
-      {/*    onBackButtonClicked()*/}
-      {/*  }}*/}
-      {/*/>*/}
+      <TelegramBackButton
+        onClick={() => {
+          setDurationHours(undefined)
+          setDurationMinutes(undefined)
+          onBackButtonClicked()
+        }}
+      />
       <TelegramMainButton
         text={'Save appointment duration'}
         disabled={durationHours === undefined || durationMinutes === undefined}

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Schedule } from '@prisma/client'
 
 import { LinkModel } from '@/lib/models/Link.model'
 import { createNewLink } from '@/lib/services/links.service'
+import { ScheduleModel } from '@/lib/models/Schedule.model'
 
 export interface CreateNewLinkPayload {
   link: Omit<LinkModel, 'schedule' | 'id'>
-  schedule: Schedule
+  schedule: ScheduleModel
 }
 
 export async function POST(request: NextRequest) {
