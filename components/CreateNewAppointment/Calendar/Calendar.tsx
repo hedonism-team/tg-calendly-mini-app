@@ -19,6 +19,7 @@ export function Calendar({ date, onDateSelected }: CalendarProps) {
 
   return (
     <DayPicker
+      ISOWeek
       mode="single"
       selected={date}
       onSelect={onDateSelected}

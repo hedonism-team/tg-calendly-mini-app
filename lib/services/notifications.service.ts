@@ -9,9 +9,8 @@ import {
   getAppointmentById,
   updateAppointmentStatus,
 } from '@/lib/services/appointments.service'
-import { UserModel } from '@/lib/models/User.model'
 import { LinkModel } from '@/lib/models/Link.model'
-import { getUserById } from '@/lib/services/users.service'
+import { getUserById, getUserNickname } from '@/lib/services/users.service'
 
 export async function sendNewAppointmentNotification({
   id: appointmentId,
@@ -114,12 +113,3 @@ export function getFullLink(id: LinkModel['id']) {
   return `https://t.me/meetly_bot/app?startapp=l_${id}`
 }
 
-export function getUserNickname(user: UserModel) {
-  let response
-  if (user.username) {
-    response = `@${user.username}`
-  } else {
-    response = `${user.firstName ?? ''} ${user.lastName ?? ''}`
-  }
-  return response
-}

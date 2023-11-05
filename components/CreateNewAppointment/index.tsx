@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -10,6 +10,9 @@ import { TelegramBackButton } from '@/components/TelegramBackButton'
 import { AppointmentCreationSuccess } from '@/components/CreateNewAppointment/AppointmentCreationSuccess'
 import { ErrorPage } from '@/components/ErrorPage'
 import { PageHeader } from '@/components/PageHeader'
+import { UserModel } from '@/lib/models/User.model'
+import { LinkModel } from '@/lib/models/Link.model'
+import { CreateAppointmentPageHeader } from '@/components/CreateNewAppointment/CreateAppointmentPageHeader'
 
 interface CreateNewAppointmentComponentProps {
   linkId: string
@@ -32,11 +35,22 @@ export function CreateNewAppointmentComponent({
   onBackButtonClicked,
 }: CreateNewAppointmentComponentProps) {
   const queryClient = useQueryClient()
-  const [date, setDate] = React.useState<Date | undefined>(dayjs().toDate())
-  const [timeSlot, setTimeSlot] = React.useState<ShiftedTimeSlot | undefined>()
-  const [isAppointmentCreated, setIsAppointmentCreated] = React.useState<
+  const [date, setDate] = useState<Date | undefined>(dayjs().toDate())
+  const [timeSlot, setTimeSlot] = useState<ShiftedTimeSlot | undefined>()
+  const [isAppointmentCreated, setIsAppointmentCreated] = useState<
     boolean | undefined
   >()
+
+  const [link, setLink] = useState<LinkModel | undefined | null>()
+  const [linkOwner, setLinkOwner] = useState<UserModel | undefined | null>()
+  const wrappedSetLinkOwner = useCallback(
+    (data: { link: LinkModel | null; owner: UserModel | null }) => {
+      setLink(data.link)
+      setLinkOwner(data.owner)
+    },
+    []
+  )
+  useEnsureLink(linkId, wrappedSetLinkOwner)
 
   function isDateTimeMode() {
     return (!date || !timeSlot) && !isAppointmentCreated
@@ -59,7 +73,10 @@ export function CreateNewAppointmentComponent({
       {isDateTimeMode() && (
         <>
           <div className="flex-1">
-            <PageHeader text={'Choose suitable date and time slot'} />
+            {!linkOwner && (
+              <PageHeader text={'Choose suitable date and time slot'} />
+            )}
+            {linkOwner && <CreateAppointmentPageHeader linkOwner={linkOwner} />}
           </div>
 
           <div className="flex-1">
@@ -121,4 +138,28 @@ export function CreateNewAppointmentComponent({
       {isAppointmentCreated && <AppointmentCreationSuccess />}
     </div>
   )
+}
+
+function useEnsureLink(
+  linkId: string,
+  setData: (data: { link: LinkModel | null; owner: UserModel | null }) => void
+) {
+  useEffect(() => {
+    const getLink = async (linkId: string) => {
+      const response = await fetch(`/api/links?id=${linkId}`, {
+        method: 'GET',
+      })
+      if (!response.ok) {
+        throw new Error('Failed to get link')
+      }
+      return response.json()
+    }
+    getLink(linkId)
+      .then((data) => {
+        setData(data)
+      })
+      .catch((e) => {
+        setData({ link: null, owner: null })
+      })
+  }, [linkId, setData])
 }

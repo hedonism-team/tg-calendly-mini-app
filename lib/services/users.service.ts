@@ -54,3 +54,13 @@ function mapDbUserToModel({ id, tag, firstName, lastName, username }: User) {
     username,
   } as UserModel
 }
+
+export function getUserNickname(user: UserModel) {
+  let response
+  if (user.username) {
+    response = `@${user.username}`
+  } else {
+    response = `${user.firstName ?? ''} ${user.lastName ?? ''}`
+  }
+  return response
+}
