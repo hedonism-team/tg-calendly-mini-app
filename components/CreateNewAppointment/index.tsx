@@ -7,6 +7,7 @@ import { Calendar } from './Calendar'
 import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
 import { CreateNewAppointmentForm } from './Form'
 import { TelegramBackButton } from '@/components/TelegramBackButton'
+import { AppointmentCreationSuccess } from '@/components/CreateNewAppointment/AppointmentCreationSuccess'
 
 interface CreateNewAppointmentComponentProps {
   linkId: string
@@ -35,8 +36,12 @@ export function CreateNewAppointmentComponent({
     boolean | undefined
   >()
 
+  function isDateTimeMode() {
+    return (!date || !timeSlot) && !isAppointmentCreated
+  }
+
   function isFormMode() {
-    return date && timeSlot
+    return date && timeSlot && !isAppointmentCreated
   }
 
   // TODO remove
@@ -46,12 +51,14 @@ export function CreateNewAppointmentComponent({
 
   return (
     <div className="flex flex-col">
-      <div className="flex-1 border-b-white my-2">
-        <div className="flex w-full justify-center">HEADER</div>
-      </div>
+      {isDateTimeMode() && (
+        <>
+          <div className="flex-1 border-b-white my-2">
+            <div className="flex w-full justify-center">
+              Choose suitable date and time slot
+            </div>
+          </div>
 
-      {!isFormMode() && (
-        <div>
           <div className="flex-1">
             <div className="flex w-full justify-center">
               <div className="w-80">
@@ -80,10 +87,16 @@ export function CreateNewAppointmentComponent({
               onBackButtonClicked()
             }}
           />
-        </div>
+        </>
       )}
+
       {isFormMode() && (
         <>
+          <div className="flex-1 border-b-white my-2">
+            <div className="flex w-full justify-center">
+              Confirm appointment details
+            </div>
+          </div>
           <div className="flex-1">
             <CreateNewAppointmentForm
               linkId={linkId}
@@ -103,11 +116,8 @@ export function CreateNewAppointmentComponent({
           </div>
         </>
       )}
-      {isAppointmentCreated && (
-        <div className="flex-1 w-full justify-center">
-          Success! Link has been created!
-        </div>
-      )}
+
+      {isAppointmentCreated && <AppointmentCreationSuccess />}
     </div>
   )
 }

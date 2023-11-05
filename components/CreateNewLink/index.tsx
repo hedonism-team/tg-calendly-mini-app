@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CreateNewLinkForm } from './Form'
 import { ScheduleComponent } from './Schedule/ScheduleComponent'
 import { ScheduleModel } from '@/lib/models/Schedule.model'
+import { LinkCreationSuccess } from '@/components/CreateNewLink/LinkCreationSuccess'
 
 interface CreateNewLinkComponentProps {
   userId: number | undefined
@@ -32,40 +33,46 @@ export function CreateNewLinkComponent({
 
   return (
     <div className="flex flex-col">
-      <div className="flex-1 border-b-white my-2">
-        <div className="flex w-full justify-center">HEADER</div>
-      </div>
-
       {isScheduleMode() && (
-        <div className="flex-1">
-          <ScheduleComponent
-            onScheduleSelected={setSchedule}
-            onBackButtonClicked={onBackButtonClicked}
-          />
-        </div>
+        <>
+          <div className="flex-1 border-b-white my-2">
+            <div className="flex w-full justify-center">
+              Choose the time available for booking
+            </div>
+          </div>
+          <div className="flex-1">
+            <ScheduleComponent
+              onScheduleSelected={setSchedule}
+              onBackButtonClicked={onBackButtonClicked}
+            />
+          </div>
+        </>
       )}
 
       {isFormMode() && (
-        <div className="flex-1">
-          <CreateNewLinkForm
-            userId={userId}
-            timezone={timezone}
-            schedule={schedule!}
-            onLinkCreated={() => {
-              setIsLinkCreated(true)
-            }}
-            onBackButtonClicked={() => {
-              setSchedule(undefined)
-            }}
-          />
-        </div>
+        <>
+          <div className="flex-1 border-b-white my-2">
+            <div className="flex w-full justify-center">
+              Choose the duration of any further bookings
+            </div>
+          </div>
+          <div className="flex-1">
+            <CreateNewLinkForm
+              userId={userId}
+              timezone={timezone}
+              schedule={schedule!}
+              onLinkCreated={() => {
+                setIsLinkCreated(true)
+              }}
+              onBackButtonClicked={() => {
+                setSchedule(undefined)
+              }}
+            />
+          </div>
+        </>
       )}
 
-      {isLinkCreated && (
-        <div className="flex-1 w-full justify-center">
-          Success! Link has been created!
-        </div>
-      )}
+      {isLinkCreated && <LinkCreationSuccess />}
     </div>
   )
 }
