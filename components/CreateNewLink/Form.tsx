@@ -60,31 +60,31 @@ export function CreateNewLinkForm({
   })
 
   return (
-    <div>
-      <div>{JSON.stringify(duration, null, 2)}</div>
-      <div>{JSON.stringify(schedule, null, 2)}</div>
-      <form>
-        <DurationSelector
-          selectedDuration={duration}
-          onDurationUpdated={(updatedDuration: Partial<TimeSlotDuration>) => {
-            setDuration(getUpdatedDuration(duration, updatedDuration))
-          }}
-        />
-        {error && <span className="text-error">{error?.message}</span>}
-        <TelegramMainButton
-          progress={isPending}
-          disabled={!isDurationSelected(duration)}
-          text={isPending ? 'Creating...' : 'Create link'}
+    <div className="flex w-full justify-center">
+      <div className="w-80 mt-36">
+        <form>
+          <DurationSelector
+            selectedDuration={duration}
+            onDurationUpdated={(updatedDuration: Partial<TimeSlotDuration>) => {
+              setDuration(getUpdatedDuration(duration, updatedDuration))
+            }}
+          />
+          {error && <span className="text-error">{error?.message}</span>}
+          <TelegramMainButton
+            progress={isPending}
+            disabled={!isDurationSelected(duration)}
+            text={isPending ? 'Creating...' : 'Create link'}
+            onClick={() => {
+              mutate()
+            }}
+          />
+        </form>
+        <TelegramBackButton
           onClick={() => {
-            mutate()
+            onBackButtonClicked()
           }}
         />
-      </form>
-      <TelegramBackButton
-        onClick={() => {
-          onBackButtonClicked()
-        }}
-      />
+      </div>
     </div>
   )
 }
