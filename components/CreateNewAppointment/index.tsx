@@ -10,7 +10,6 @@ import { FreeTimeSlotsComponent } from './FreeTimeSlotsComponent'
 import { CreateNewAppointmentForm } from './Form'
 import { TimezoneSelectorComponent } from '@/components/TimezoneSelectorComponent'
 import { TelegramBackButton } from '@/components/TelegramBackButton'
-import { TelegramMainButton } from '@/components/TelegramMainButton'
 
 interface CreateNewAppointmentComponentProps {
   linkId: string
@@ -94,27 +93,29 @@ export function CreateNewAppointmentComponent({
         </div>
       )}
       {isFormMode() && (
-        <div className="flex-1">
-          <CreateNewAppointmentForm
-            linkId={linkId}
-            timeSlot={timeSlot!}
-            requestingUserId={userId}
-            requestingUserTimezone={timezone}
-            dateString={getDateString(date)}
-            onAppointmentCreated={async () => {
+        <>
+          <div className="flex-1">
+            <CreateNewAppointmentForm
+              linkId={linkId}
+              timeSlot={timeSlot!}
+              requestingUserId={userId}
+              requestingUserTimezone={timezone}
+              dateString={getDateString(date)}
+              onAppointmentCreated={async () => {
+                setTimeSlot(undefined)
+                await queryClient.invalidateQueries()
+                setIsAppointmentCreated(true)
+              }}
+            />
+          </div>
+          <TelegramBackButton
+            onClick={() => {
               setTimeSlot(undefined)
-              await queryClient.invalidateQueries()
-              setIsAppointmentCreated(true)
             }}
           />
-        </div>
+        </>
       )}
-      {isAppointmentCreated && (
-        <div className="flex-1">
-          <TelegramMainButton />
-          <TelegramBackButton />
-        </div>
-      )}
+      {isAppointmentCreated && <div className="flex-1">Success!</div>}
     </div>
   )
 }
