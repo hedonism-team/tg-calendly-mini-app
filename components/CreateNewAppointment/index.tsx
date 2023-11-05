@@ -69,6 +69,14 @@ export function CreateNewAppointmentComponent({
     )
   }
 
+  if (link === null) {
+    return (
+      <div className="flex-1">
+        <ErrorPage message={'Oops! Most likely this link does not exist'} />
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col">
       {isDateTimeMode() && (
