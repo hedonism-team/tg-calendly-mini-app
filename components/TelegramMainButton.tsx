@@ -23,6 +23,8 @@ export function TelegramMainButton({
           onClick={onClick}
           progress={progress ?? false}
           disabled={disabled ?? false}
+          color={'#4ade80'}
+          textColor={'#1f2937'}
         />
       )}
     </>

@@ -73,8 +73,8 @@ export function FreeTimeSlotsComponent({
   if (data.length === 0) {
     return (
       <div className="flex w-full justify-center">
-        <div className="text-error">
-          <span>No time slots available</span>
+        <div className="text-error font-bold">
+          <span>❌ No time slots available</span>
         </div>
       </div>
     )
