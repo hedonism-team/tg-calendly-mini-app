@@ -71,30 +71,46 @@ export async function sendAppointmentRequestResultNotification(
 }
 
 export async function sendLinkCreatedNotification({ id, userId }: LinkModel) {
-  const mainMessageText = `<b>🎉 Your link created!</b>\n\nUse this link to receive incoming booking requests\n\n<code>${getFullLink(
-    id
-  )}</code>\n\nShare the message below to start getting bookings`
-  const mainMessage = await bot.api.sendMessage(userId, mainMessageText, {
+  await bot.api.sendMessage(userId, getLinkCreatedMessageText(id), {
     parse_mode: 'HTML',
   })
-  console.log('[LinkCreatedNotification] mainMessage', mainMessage)
+  await bot.api.sendMessage(userId, getSharableMessageText(id), {
+    parse_mode: 'HTML',
+  })
+}
 
-  const sharableMessageText = `Book my time by clicking <a href="${getFullLink(
-    id
-  )}">here</a>`
-  const sharableMessage = await bot.api.sendMessage(
-    userId,
-    sharableMessageText,
-    {
-      parse_mode: 'HTML',
-    }
-  )
-  console.log('[LinkCreatedNotification] sharableMessage', sharableMessage)
+export async function sendLinkUpdatedNotification({ id, userId }: LinkModel) {
+  await bot.api.sendMessage(userId, getLinkUpdatedMessageText(id), {
+    parse_mode: 'HTML',
+  })
+  await bot.api.sendMessage(userId, getSharableMessageText(id), {
+    parse_mode: 'HTML',
+  })
 }
 
 // helpers
 
-function getFullLink(id: LinkModel['id']) {
+export function getLinkCreatedMessageText(id: LinkModel['id']) {
+  return `<b>🎉 Your link created!</b>\n\nUse this link to receive incoming booking requests\n\n<code>${getFullLink(
+    id
+  )}</code>\n\nShare the message below to start getting bookings`
+}
+
+export function getLinkUpdatedMessageText(id: LinkModel['id']) {
+  return `<b>♻️ Your link updated!</b>\n\nShare the message below to start getting bookings`
+}
+
+export function getSharableMessageText(id: LinkModel['id']) {
+  return `Book my time by clicking <a href="${getFullLink(id)}">here</a>`
+}
+
+export function getMyLinkMessageText(id: LinkModel['id']) {
+  return `Use this link to receive incoming booking requests\n\n<code>${getFullLink(
+    id
+  )}</code>\n\nShare the message below to start getting bookings`
+}
+
+export function getFullLink(id: LinkModel['id']) {
   return `https://t.me/meetly_bot/app?startapp=l_${id}`
 }
 

@@ -1,16 +1,31 @@
 import { Bot } from 'grammy'
 import { AppointmentStatus } from '@/lib/models/Appointment.model'
 import {
+  getMyLinkMessageText,
+  getSharableMessageText,
   sendAppointmentRequestResultNotification,
   updateNewAppointmentNotification,
 } from '@/lib/services/notifications.service'
+import prisma from '@/lib/prisma'
 
 const { BOT_TOKEN: token = '' } = process.env
 export const bot = new Bot(token)
 
-// TODO refactor
 bot.on('message', async (ctx) => {
-  await ctx.reply('Hi there!')
+  // do nothing
+})
+
+bot.command('link', async (ctx) => {
+  const userId = ctx.message!.chat.id
+  const link = await prisma.link.findFirst({ where: { userId } })
+  if (!link) {
+    await ctx.reply("You don't have any links yet!")
+  } else {
+    await ctx.reply(getMyLinkMessageText(link.id), { parse_mode: 'HTML' })
+    await ctx.reply(getSharableMessageText(link.id), {
+      parse_mode: 'HTML',
+    })
+  }
 })
 
 bot.on('callback_query:data', async (ctx) => {
