@@ -61,7 +61,7 @@ export function CreateNewLinkForm({
 
   return (
     <div className="flex w-full justify-center">
-      <div className="w-80 mt-36">
+      <div className="w-80 mt-16">
         <form>
           <DurationSelector
             selectedDuration={duration}

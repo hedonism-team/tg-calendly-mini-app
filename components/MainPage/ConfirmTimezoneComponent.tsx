@@ -20,7 +20,7 @@ export function ConfirmTimezoneComponent({
         <PageHeader text={'Confirm your timezone'} />
       </div>
       <div className="flex-1">
-        <div className="flex w-full mt-36 justify-center">
+        <div className="flex w-full mt-16 justify-center">
           <div className="w-80">
             <TimezoneSelectorComponent
               timezone={timezone!}
