@@ -46,13 +46,11 @@ export function WelcomeComponent({ tgUser }: WelcomeComponentProps) {
                   We are glad to welcome you
                   <kbd className="kbd kbd-md">{getUserNickname(user)}</kbd>
                 </h1>
-                <div className="mt-4">
-                  <p>
-                    Create your personal link to start getting book requests
-                  </p>
-                </div>
               </div>
             )}
+            <div className="mt-4">
+              <p>Create your personal link to start getting book requests</p>
+            </div>
           </div>
           <a href={getCreateNewLinkPageUrl()}>
             <button className="btn btn-primary">Create a link</button>
