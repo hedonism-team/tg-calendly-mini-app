@@ -64,7 +64,10 @@ export function CreateNewLinkForm({
         {error && <span className="text-error">{error?.message}</span>}
         <TelegramMainButton
           text={'Create link'}
-          onClick={() => handleSubmit(onSubmit)}
+          onClick={() => {
+            console.log('handleSubmit')
+            handleSubmit(onSubmit)
+          }}
         />
       </form>
       <TelegramBackButton
