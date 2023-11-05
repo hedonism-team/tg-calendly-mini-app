@@ -16,6 +16,9 @@ interface CreateNewLinkFormProps {
   onBackButtonClicked: () => void
 }
 
+const defaultDurationHours = 1
+const defaultDurationMinutes = 0
+
 export function CreateNewLinkForm({
   userId,
   timezone,
@@ -23,14 +26,17 @@ export function CreateNewLinkForm({
   onLinkCreated,
   onBackButtonClicked,
 }: CreateNewLinkFormProps) {
-  const [duration, setDuration] = useState<TimeSlotDuration | undefined>()
+  const [duration, setDuration] = useState<Partial<TimeSlotDuration>>({
+    hours: defaultDurationHours,
+    minutes: defaultDurationMinutes,
+  })
   const { mutate, isPending, error } = useMutation({
     mutationFn: async () => {
       const requestData: CreateNewLinkPayload = {
         link: {
           userId,
           timezone,
-          duration: duration!,
+          duration: duration as TimeSlotDuration,
         },
         schedule,
       }
@@ -59,15 +65,17 @@ export function CreateNewLinkForm({
       <div>{JSON.stringify(schedule, null, 2)}</div>
       <form>
         <DurationSelector
-          onDurationUpdated={setDuration}
+          selectedDuration={duration}
+          onDurationUpdated={(updatedDuration: Partial<TimeSlotDuration>) => {
+            setDuration(getUpdatedDuration(duration, updatedDuration))
+          }}
         />
         {error && <span className="text-error">{error?.message}</span>}
         <TelegramMainButton
-          disabled={!duration}
           progress={isPending}
+          disabled={isDurationSelected(duration)}
           text={isPending ? 'Creating...' : 'Create link'}
           onClick={() => {
-            console.log('handleSubmit')
             mutate()
           }}
         />
@@ -79,4 +87,24 @@ export function CreateNewLinkForm({
       />
     </div>
   )
+}
+
+// private
+
+function isDurationSelected(duration: Partial<TimeSlotDuration>) {
+  return (
+    duration.hours !== undefined &&
+    duration.minutes !== undefined &&
+    !(duration.hours === 0 && duration.minutes === 0)
+  )
+}
+
+function getUpdatedDuration(
+  duration: Partial<TimeSlotDuration>,
+  updatedDuration: Partial<TimeSlotDuration>
+) {
+  return {
+    ...duration,
+    updatedDuration,
+  }
 }

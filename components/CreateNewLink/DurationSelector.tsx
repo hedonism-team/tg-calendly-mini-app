@@ -1,25 +1,20 @@
 import { range } from 'lodash'
-import React, { useState } from 'react'
+import React from 'react'
 
 import { TimeSlotDuration } from '@/lib/models/Link.model'
 
 interface DurationSelectorProps {
-  onDurationUpdated: (duration: TimeSlotDuration) => void
+  selectedDuration: Partial<TimeSlotDuration>
+  onDurationUpdated: (duration: Partial<TimeSlotDuration>) => void
 }
 
 const allHours = range(0, 6)
 const allMinutes = range(0, 60, 15)
-const defaultDurationHours = 1
-const defaultDurationMinutes = 0
 
-export function DurationSelector({ onDurationUpdated }: DurationSelectorProps) {
-  const [durationHours, setDurationHours] = useState<number | undefined>(
-    defaultDurationHours
-  )
-  const [durationMinutes, setDurationMinutes] = useState<number | undefined>(
-    defaultDurationMinutes
-  )
-
+export function DurationSelector({
+  selectedDuration,
+  onDurationUpdated,
+}: DurationSelectorProps) {
   return (
     <div className="flex w-full justify-center">
       <div className="flex flex-row w-80 justify-center">
@@ -33,12 +28,11 @@ export function DurationSelector({ onDurationUpdated }: DurationSelectorProps) {
             className="select select-sm select-bordered max-w-xs"
             onChange={(e) => {
               const hours = Number(e.target.value)
-              setDurationHours(hours)
-              onDurationUpdated({ hours, minutes: durationMinutes! })
+              onDurationUpdated({ hours })
             }}
           >
             {allHours.map((hours) => (
-              <option key={hours} selected={hours === durationHours}>
+              <option key={hours} selected={hours === selectedDuration.hours}>
                 {hours}
               </option>
             ))}
@@ -54,12 +48,14 @@ export function DurationSelector({ onDurationUpdated }: DurationSelectorProps) {
             className="select select-sm select-bordered max-w-xs"
             onChange={(e) => {
               const minutes = Number(e.target.value)
-              setDurationMinutes(minutes)
-              onDurationUpdated({ hours: durationHours!, minutes })
+              onDurationUpdated({ minutes })
             }}
           >
             {allMinutes.map((minutes) => (
-              <option key={minutes} selected={minutes === durationMinutes}>
+              <option
+                key={minutes}
+                selected={minutes === selectedDuration.minutes}
+              >
                 {minutes}
               </option>
             ))}
