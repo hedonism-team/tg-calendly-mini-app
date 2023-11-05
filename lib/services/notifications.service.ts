@@ -18,8 +18,8 @@ export async function sendNewAppointmentNotification({
   // TODO add clickable link to Tg profile
   const responseText = `You've got a new appointment from User#${requestingUserId}`
   const inlineKeyboard = new InlineKeyboard()
-    .text('Reject', `${AppointmentStatus.rejected}|${appointmentId}`)
-    .text('Approve', `${AppointmentStatus.approved}|${appointmentId}`)
+    .text('❌ Reject', `${AppointmentStatus.rejected}|${appointmentId}`)
+    .text('✅ Approve', `${AppointmentStatus.approved}|${appointmentId}`)
   const result = await bot.api.sendMessage(userId, responseText, {
     reply_markup: inlineKeyboard,
   })
