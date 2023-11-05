@@ -38,12 +38,12 @@ export function WeekdayWorkingHoursComponent({
         <div key={weekdayName + timePointType} className="">
           <div className="form-control max-w-xs">
             <label className="label">
-              <span className="label-text">
+              <span className="label-text label">
                 {weekdayName} {timePointType} time
               </span>
             </label>
             <select
-              className="select select-sm select-bordered max-w-xs"
+              className="select select-xs select-bordered max-w-xs"
               onChange={(e) => {
                 const value = e.target.value
                 onWorkingHoursSelected(

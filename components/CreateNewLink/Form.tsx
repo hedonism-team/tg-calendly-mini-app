@@ -105,6 +105,6 @@ function getUpdatedDuration(
 ) {
   return {
     ...duration,
-    updatedDuration,
+    ...updatedDuration,
   }
 }
