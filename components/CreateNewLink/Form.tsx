@@ -92,10 +92,10 @@ export function CreateNewLinkForm({
 // private
 
 function isDurationSelected(duration: Partial<TimeSlotDuration>) {
-  return (
-    duration.hours !== undefined &&
-    duration.minutes !== undefined &&
-    !(duration.hours === 0 && duration.minutes === 0)
+  return !(
+    duration.hours === undefined ||
+    duration.minutes === undefined ||
+    (duration.hours === 0 && duration.minutes === 0)
   )
 }
 
