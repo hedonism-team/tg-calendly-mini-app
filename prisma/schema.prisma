@@ -1,50 +1,44 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
-  id        BigInt  @id @unique
-  firstName String?
-  lastName  String?
-  username  String?
-
-  Link Link[]
-
-  Appointments Appointment[] @relation(name: "user")
-  SentRequests Appointment[] @relation(name: "requestingUser")
+  id           BigInt        @id @unique
+  tag          String        @unique
+  firstName    String?
+  lastName     String?
+  username     String?
+  SentRequests Appointment[] @relation("requestingUser")
+  Appointments Appointment[] @relation("user")
+  Link         Link[]
 
   @@map("users")
 }
 
 model Link {
-  id              String @id @unique
+  id              String        @id @unique
   userId          BigInt
   timezone        String
   durationHours   Int
   durationMinutes Int
-  scheduleId      Int    @unique
-
-  user        User          @relation(fields: [userId], references: [id])
-  Schedule    Schedule?     @relation(fields: [scheduleId], references: [id])
-  Appointment Appointment[]
+  scheduleId      Int           @unique
+  Appointment     Appointment[]
+  Schedule        Schedule      @relation(fields: [scheduleId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
 
   @@map("links")
 }
 
 model Schedule {
-  id     Int     @id @default(autoincrement())
-  userId BigInt
-  linkId String?
-
+  id                  Int     @id @default(autoincrement())
+  userId              BigInt
+  linkId              String?
   mondayStartTime     String?
   mondayFinishTime    String?
   tuesdayStartTime    String?
@@ -59,8 +53,7 @@ model Schedule {
   saturdayFinishTime  String?
   sundayStartTime     String?
   sundayFinishTime    String?
-
-  Link Link?
+  Link                Link?
 
   @@map("schedules")
 }
@@ -75,10 +68,9 @@ model Appointment {
   timeSlotFinishTime String
   email              String
   status             String?
-
-  user           User @relation(fields: [userId], references: [id], name: "user")
-  requestingUser User @relation(fields: [requestingUserId], references: [id], name: "requestingUser")
-  link           Link @relation(fields: [linkId], references: [id])
+  link               Link    @relation(fields: [linkId], references: [id])
+  requestingUser     User    @relation("requestingUser", fields: [requestingUserId], references: [id])
+  user               User    @relation("user", fields: [userId], references: [id])
 
   @@unique([userId, date, timeSlotStartTime])
   @@unique([requestingUserId, date, timeSlotStartTime])

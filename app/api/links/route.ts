@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { LinkModel } from '@/lib/models/Link.model'
-import { createNewLink } from '@/lib/services/links.service'
+import { createOrUpdateLink } from '@/lib/services/links.service'
 import { ScheduleModel } from '@/lib/models/Schedule.model'
 
 export interface CreateNewLinkPayload {
@@ -12,7 +12,7 @@ export interface CreateNewLinkPayload {
 export async function POST(request: NextRequest) {
   const data = await request.json()
   try {
-    const link = await createNewLink(data.link, data.schedule)
+    const link = await createOrUpdateLink(data.link, data.schedule)
     return NextResponse.json({ link }, { status: 201 })
   } catch (e) {
     const error = e as Error

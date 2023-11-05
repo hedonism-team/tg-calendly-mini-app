@@ -1,15 +1,41 @@
-import { Schedule } from '@prisma/client'
-import { DayOfWeek, ScheduleModel } from '@/lib/models/Schedule.model'
 import prisma from '@/lib/prisma'
-import { getWeekdayNames } from '@/lib/utils/weekdays'
+import { Schedule } from '@prisma/client'
 
-export async function createNewSchedule(schedule: Schedule) {
-  return prisma.schedule.create({
-    data: schedule,
+import {
+  DayOfWeek,
+  ScheduleModel,
+  ScheduleModelWithId,
+} from '@/lib/models/Schedule.model'
+import { getWeekdayNames } from '@/lib/utils/weekdays'
+import { LinkModel } from '@/lib/models/Link.model'
+
+export async function createOrUpdateSchedule(
+  schedule: ScheduleModel,
+  { id: linkId, userId }: Pick<LinkModel, 'id' | 'userId'>
+): Promise<ScheduleModelWithId> {
+  const data = mapScheduleModelToDbInstance(schedule, { id: linkId, userId })
+  const existingSchedule = await prisma.schedule.findFirst({
+    where: {
+      linkId,
+      userId: BigInt(userId),
+    },
   })
+  const dbInstance = !existingSchedule
+    ? await prisma.schedule.create({
+        data: data,
+      })
+    : await prisma.schedule.update({
+        where: {
+          id: existingSchedule.id,
+        },
+        data: data,
+      })
+  return mapDbScheduleToModel(dbInstance)
 }
+
 // TODO refactor
 export function mapDbScheduleToModel({
+  id,
   mondayStartTime,
   mondayFinishTime,
   tuesdayStartTime,
@@ -62,7 +88,8 @@ export function mapDbScheduleToModel({
       finish: sundayFinishTime,
     },
   ]
-  const schedule: ScheduleModel = {
+  const schedule: ScheduleModelWithId = {
+    id,
     [DayOfWeek.Monday]: null,
     [DayOfWeek.Tuesday]: null,
     [DayOfWeek.Wednesday]: null,
@@ -87,25 +114,29 @@ function isNotNull(value: string | null): value is string {
 }
 
 export function mapScheduleModelToDbInstance(
-  schedule: ScheduleModel
+  schedule: ScheduleModel,
+  { id: linkId, userId }: Pick<LinkModel, 'id' | 'userId'>
 ): Schedule {
   const weekdayNames = getWeekdayNames({ firstLetterUpperCased: false })
-  return weekdayNames.reduce((previousValue, weekdayName, weekdayIndex) => {
-    const dayOfWeek: DayOfWeek = weekdayIndex
-    const startTimeField = `${weekdayName}StartTime` as keyof Schedule
-    const finishTimeField = `${weekdayName}FinishTime` as keyof Schedule
-    if (!schedule[dayOfWeek]) {
-      // @ts-ignore
-      previousValue[startTimeField] = null
-      // @ts-ignore
-      previousValue[finishTimeField] = null
-    } else {
-      const { startTime, finishTime } = schedule[weekdayIndex as DayOfWeek]!
-      // @ts-ignore
-      previousValue[startTimeField] = startTime
-      // @ts-ignore
-      previousValue[finishTimeField] = finishTime
-    }
-    return previousValue
-  }, {} as Schedule)
+  return weekdayNames.reduce(
+    (previousValue, weekdayName, weekdayIndex) => {
+      const dayOfWeek: DayOfWeek = weekdayIndex
+      const startTimeField = `${weekdayName}StartTime` as keyof Schedule
+      const finishTimeField = `${weekdayName}FinishTime` as keyof Schedule
+      if (!schedule[dayOfWeek]) {
+        // @ts-ignore
+        previousValue[startTimeField] = null
+        // @ts-ignore
+        previousValue[finishTimeField] = null
+      } else {
+        const { startTime, finishTime } = schedule[weekdayIndex as DayOfWeek]!
+        // @ts-ignore
+        previousValue[startTimeField] = startTime
+        // @ts-ignore
+        previousValue[finishTimeField] = finishTime
+      }
+      return previousValue
+    },
+    { linkId, userId: BigInt(userId) } as Schedule
+  )
 }

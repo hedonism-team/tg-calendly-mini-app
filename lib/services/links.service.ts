@@ -1,27 +1,45 @@
 import prisma from '@/lib/prisma'
-import type { Link, Schedule } from '@prisma/client'
+import type { Link } from '@prisma/client'
+
 import { LinkModel } from '@/lib/models/Link.model'
 import {
-  createNewSchedule,
+  createOrUpdateSchedule,
   mapDbScheduleToModel,
-  mapScheduleModelToDbInstance,
 } from '@/lib/services/schedules.service'
 import { createOrUpdateUser } from '@/lib/services/users.service'
-import { ScheduleModel } from '@/lib/models/Schedule.model'
+import { ScheduleModel, ScheduleModelWithId } from '@/lib/models/Schedule.model'
 
-export async function createNewLink(
-  { id, userId, timezone, duration }: LinkModel,
-  schedule: ScheduleModel
+export async function createOrUpdateLink(
+  { userId, timezone, duration }: Omit<LinkModel, 'schedule' | 'id'>,
+  schedule: Omit<ScheduleModel, 'id'>
 ) {
-  await createOrUpdateUser({ id: userId })
-  const scheduleInstance = await createNewSchedule(
-    mapScheduleModelToDbInstance(schedule)
-  )
-  console.log('schedule created', scheduleInstance)
+  const user = await createOrUpdateUser({ id: userId })
+  const existingLink = await prisma.link.findUnique({ where: { id: user.tag } })
+  const linkId = existingLink ? existingLink.id : user.tag
+  const scheduleInstance = await createOrUpdateSchedule(schedule, {
+    id: linkId,
+    userId,
+  })
+  if (existingLink) {
+    return mapDbInstanceToModel(
+      await prisma.link.update({
+        where: {
+          id: linkId,
+        },
+        data: {
+          timezone,
+          durationHours: duration.hours,
+          durationMinutes: duration.minutes,
+          scheduleId: scheduleInstance.id,
+        },
+      }),
+      scheduleInstance
+    )
+  }
   return mapDbInstanceToModel(
     await prisma.link.create({
       data: {
-        id,
+        id: linkId,
         userId,
         timezone,
         durationHours: duration.hours,
@@ -48,14 +66,17 @@ export async function getLinkById(
   if (!dbInstance) {
     return null
   }
-  return mapDbInstanceToModel(dbInstance, dbInstance.Schedule)
+  return mapDbInstanceToModel(
+    dbInstance,
+    includeSchedule ? mapDbScheduleToModel(dbInstance.Schedule) : undefined
+  )
 }
 
 // private
 
 function mapDbInstanceToModel(
   { id, userId, timezone, durationHours, durationMinutes }: Link,
-  dbSchedule: Schedule | null
+  schedule: ScheduleModelWithId | undefined
 ): LinkModel {
   const model: LinkModel = {
     id,
@@ -66,8 +87,8 @@ function mapDbInstanceToModel(
       minutes: durationMinutes,
     },
   }
-  if (dbSchedule) {
-    model.schedule = mapDbScheduleToModel(dbSchedule)
+  if (schedule) {
+    model.schedule = schedule
   }
   return model
 }
