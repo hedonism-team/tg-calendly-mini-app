@@ -1,6 +1,5 @@
 import React from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { TimeSlotDuration } from '@/lib/models/Link.model'
 import { ScheduleModel } from '@/lib/models/Schedule.model'
@@ -25,7 +24,6 @@ export function CreateNewLinkForm({
   onLinkCreated,
   onBackButtonClicked,
 }: CreateNewLinkFormProps) {
-  const { handleSubmit } = useForm()
   const { mutate, isPending, error } = useMutation({
     mutationFn: async () => {
       const requestData: CreateNewLinkPayload = {
@@ -54,7 +52,6 @@ export function CreateNewLinkForm({
       onLinkCreated()
     },
   })
-  const onSubmit: SubmitHandler<any> = () => mutate()
 
   return (
     <div>
@@ -63,10 +60,11 @@ export function CreateNewLinkForm({
       <form>
         {error && <span className="text-error">{error?.message}</span>}
         <TelegramMainButton
-          text={'Create link'}
+          text={isPending ? 'Creating...' : 'Create link'}
+          progress={isPending}
           onClick={() => {
             console.log('handleSubmit')
-            handleSubmit(onSubmit)
+            mutate()
           }}
         />
       </form>

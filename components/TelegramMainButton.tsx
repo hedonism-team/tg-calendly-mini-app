@@ -6,20 +6,23 @@ interface TelegramMainButtonProps {
   text?: string
   disabled?: boolean
   type?: string
+  progress?: boolean
 }
 
 export function TelegramMainButton({
-  onClick,
   text,
+  onClick,
   disabled,
+  progress,
 }: TelegramMainButtonProps) {
   return (
     <>
       {typeof window !== 'undefined' && (
         <MainButton
-          disabled={disabled ?? false}
           text={text ?? 'OK'}
           onClick={onClick}
+          progress={progress ?? false}
+          disabled={disabled ?? false}
         />
       )}
     </>
