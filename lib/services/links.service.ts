@@ -21,12 +21,30 @@ export async function createOrUpdateLink(
     userId,
   })
   if (existingLink) {
-    return mapDbInstanceToModel(
-      await prisma.link.update({
-        where: {
-          id: linkId,
-        },
+    return {
+      link: mapDbInstanceToModel(
+        await prisma.link.update({
+          where: {
+            id: linkId,
+          },
+          data: {
+            timezone,
+            durationHours: duration.hours,
+            durationMinutes: duration.minutes,
+            scheduleId: scheduleInstance.id,
+          },
+        }),
+        scheduleInstance
+      ),
+      isNew: false,
+    }
+  }
+  return {
+    link: mapDbInstanceToModel(
+      await prisma.link.create({
         data: {
+          id: linkId,
+          userId,
           timezone,
           durationHours: duration.hours,
           durationMinutes: duration.minutes,
@@ -34,21 +52,9 @@ export async function createOrUpdateLink(
         },
       }),
       scheduleInstance
-    )
+    ),
+    isNew: true,
   }
-  return mapDbInstanceToModel(
-    await prisma.link.create({
-      data: {
-        id: linkId,
-        userId,
-        timezone,
-        durationHours: duration.hours,
-        durationMinutes: duration.minutes,
-        scheduleId: scheduleInstance.id,
-      },
-    }),
-    scheduleInstance
-  )
 }
 
 export async function getLinkById(

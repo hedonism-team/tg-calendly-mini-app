@@ -12,8 +12,8 @@ export interface CreateNewLinkPayload {
 export async function POST(request: NextRequest) {
   const data = await request.json()
   try {
-    const link = await createOrUpdateLink(data.link, data.schedule)
-    return NextResponse.json({ link }, { status: 201 })
+    const { link, isNew } = await createOrUpdateLink(data.link, data.schedule)
+    return NextResponse.json({ link }, { status: isNew ? 201 : 200 })
   } catch (e) {
     const error = e as Error
     return NextResponse.json(

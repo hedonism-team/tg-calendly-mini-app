@@ -24,6 +24,7 @@ export function MainPageComponent({
   const [user, setUser] = useState<WebAppUser | undefined>()
   const [startParam, setStartParam] = useState<string | undefined>()
 
+  // TODO remove
   if (!isProduction) {
     if (defaultUserId && !user) {
       console.log('default userId', defaultUserId)
