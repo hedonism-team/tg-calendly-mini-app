@@ -1,4 +1,88 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Meetly
+
+Данный репозиторий представляет собой реализацию Telegram Mini Apps сервиса — Meetly, который является аналогом популярного сервиса [Calendly](https://calendly.com).
+
+Meetly — это [Telegram бот](https://t.me/meetly_bot) + [Mini App](https://t.me/meetly_bot/app), который позволяет создать персональную ссылку и использовать ее для приема запросов на встречи.
+
+## Описание бизнес-логики
+
+Каждый пользователь может иметь единственную ссылку. При повторном создании ссылки она будет обновлена с предоставленным расписанием и интервалом.
+
+**Ссылка для отправки запросов**
+
+Созданная ссылка содержит в себе:
+- рабочие часы на каждый день недели
+- длительность отрезка времени бронирования
+- таймзону в которой находится пользователь создавший ссылку
+
+**Запрос на бронь времени**
+
+- каждый запрос содержит email пользователя, отправившего запрос
+- может быть подтвержден или отклонен пользователем создавшим ссылку (в результате ботом будут отпрвлены соответствующие уведомления)
+
+### Features
+
+- создание ссылки
+    - любой пользователь Telegram может создать персональную ссылку
+    - за ссылкой закрепляется расписание пользователя и длительность отрезка времени бронь
+- отправка запроса на бронь
+    - любой пользователь Telegram, которой перешел по уже созданной ссылке, попадает в интерфейс выбора даты и времени
+    - доступные отрезки для бронирования отображаются в часовом поясе пользователя, отправляющего запрос
+- уведомления в боте
+    - уведомление о полученном запросе на бронь
+    - уведомление о подтвержденном / отклоненном запросе
+    - уведомление о создании / обновлении ссылки для броней
+- запрос персональной ссылки через команду /link
+    - в ответ бот пришлет уже созданную ссылку
+
+### Use-cases
+
+**Отправка запроса на бронь**
+
+Для того, чтобы отправить запрос на бронь времени человека X, нужно запросить у него его персональную ссылку и перейти по ней внутри Telegram. Далее в открывшемся UI выбрать подходящие дату и время и указать email.
+
+**Создание персональной ссылки для получения запросов**
+
+Для того, чтобы предоставить доступ к свободным отрезками времени в своем расписании, необходимо зайти на [страницу создания ссылки](https://t.me/meetly_bot/app?startapp=new), ввести в расписание рабочание дни и часы, а также длительность отрезка, на который будет бронироваться время.
+
+
+## Техническая реализация
+
+Проект реализован на базе [Next.js](https://nextjs.org/) framework (v14). С его помощью как отдаются клиентские страницы, так и обрабатываются запросы в API.
+
+Список специфичных инструментов и технологий использованных на сервере:
+- PostgreSQL + [Prisma](https://www.prisma.io/) - для работы с данными
+- [grammY](https://grammy.dev/) - для взаимодействия с Telegram Bots API
+
+Для реализации современного, адаптивного клиентского интерфейса использовались:
+- [react-query](https://tanstack.com/query/v3/)
+- [react-hook-form](https://react-hook-form.com/)
+- [react-day-picker](https://react-day-picker.js.org/)
+- [react-timezone-select](https://github.com/ndom91/react-timezone-select)
+- a также [Tailwind CSS](https://tailwindcss.com/) вместе с [daisyUI](https://daisyui.com/)
+
+В качестве инфраструктуры для deployment решения был выбран популярный cloud-oriented сервис [Vercel](https://vercel.com/).
+
+### Структура кода
+
+- `/app/layout.tsx` - точка входа в клиентское приложение
+- `/app/page.tsx` - основная SSR страница
+- `/app/api/**/route.ts` - файлы с реализациями обработчикой CRUD запросов к основным сущностям
+- `/app/api/webhook/route.ts` - webhook для получения обновлений от Telegram Bots API
+- `/components/*` - реализация обших клиентских компонентов
+- `/components/CreateNewAppointment/*` - компоненты реализующие логику отправки запроса на бронь
+- `/components/CreateNewLink/*` - компоненты реализующие логику создания и обновления ссылки
+- `/components/MainPage/index.tsx` - реализация компонента MainPageComponent, который является точкой входа в клиентском UI
+- `/components/WelcomePage/*` - реализация страницы, которая открывается при нажатии кнопки [Menu](https://t.me/meetly_bot/app)
+- `/lib/models/*` - типы описывающие все сущности
+- `/lib/services/*` - бизнес-логика
+- `/lib/bot.ts` - реализация Telegram бота [@meetly_bot](https://t.me/meetly_bot)
+- `/prisma/schema.prisma` - описание DB сущностей и их отношений
+
+## Ссылки
+
+- https://t.me/meetly_bot - Telegram бот
+- https://t.me/meetly_bot/app - Telegram Mini App
 
 ## Getting Started
 
@@ -6,31 +90,6 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

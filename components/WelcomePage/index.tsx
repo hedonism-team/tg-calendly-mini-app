@@ -49,7 +49,7 @@ export function WelcomeComponent({ tgUser }: WelcomeComponentProps) {
               </div>
             )}
             <div className="mt-4">
-              <p>Create your personal link to start getting book requests</p>
+              <p>Create your personal link to start getting booking requests</p>
             </div>
           </div>
           <a href={getCreateNewLinkPageUrl()}>
