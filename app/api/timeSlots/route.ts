@@ -36,7 +36,6 @@ export async function GET(request: NextRequest) {
 
 function parseRequestData(requestUrl: string) {
   const { query: data } = queryString.parseUrl(requestUrl)
-  // TODO validate data as GetFreeTimeSlotsPayload
   if (data.linkId && data.date && data.requesterTimezone) {
     return {
       linkId: data.linkId,

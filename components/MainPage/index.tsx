@@ -12,14 +12,10 @@ import { CreateNewUserPayload } from '@/app/api/users/route'
 
 interface MainPageComponentProps {
   isProduction: boolean
-  defaultUserId: number | undefined
-  defaultStartParam: string | undefined
 }
 
 export function MainPageComponent({
   isProduction,
-  defaultUserId,
-  defaultStartParam,
 }: MainPageComponentProps) {
   function getDefaultTimezone() {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -30,21 +26,6 @@ export function MainPageComponent({
   const [startParam, setStartParam] = useState<string | undefined>()
   const [timezone, setTimezone] = React.useState<string | undefined>()
   const [isTimezoneConfirmed, setIsTimezoneConfirmed] = useState<boolean>(false)
-
-  // TODO remove
-  if (!isProduction) {
-    if (defaultUserId && !user) {
-      console.log('default userId', defaultUserId)
-      setUser({ id: defaultUserId } as WebAppUser)
-    }
-    if (defaultStartParam && !startParam) {
-      console.log('default startParam', defaultStartParam)
-      setStartParam(defaultStartParam)
-    }
-    if (!isTimezoneConfirmed) {
-      setIsTimezoneConfirmed(true)
-    }
-  }
 
   useEffect(() => {
     setIsClientSide(true)

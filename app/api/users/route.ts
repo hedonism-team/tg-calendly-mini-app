@@ -28,7 +28,6 @@ export interface CreateNewUserPayload {
 }
 
 export async function POST(request: NextRequest) {
-  // TODO validate data as CreateNewUserPayload
   const data = await request.json()
   try {
     const user = await createOrUpdateUser(data)

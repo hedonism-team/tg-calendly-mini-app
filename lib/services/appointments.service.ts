@@ -8,16 +8,13 @@ import {
 } from '@/lib/models/Appointment.model'
 import { createOrUpdateUser } from '@/lib/services/users.service'
 
-// TODO implement: date range filtering
 /**
  *
  * @param userId - host's id
- * @param start
- * @param end
  */
 export async function getAllUserAppointmentsForDate(
   userId: number,
-  { start, finish }: DateRange
+  {}: DateRange
 ) {
   const appointments = await prisma.appointment.findMany({
     where: {

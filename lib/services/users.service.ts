@@ -5,7 +5,6 @@ import { User } from '@prisma/client'
 import { CreateNewUserPayload } from '@/app/api/users/route'
 import { UserModel } from '@/lib/models/User.model'
 
-// TODO support extra fields
 export async function createOrUpdateUser(user: CreateNewUserPayload) {
   const existingUser = await prisma.user.findUnique({ where: { id: user.id } })
   return mapDbUserToModel(

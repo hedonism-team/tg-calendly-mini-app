@@ -33,7 +33,6 @@ export async function createOrUpdateSchedule(
   return mapDbScheduleToModel(dbInstance)
 }
 
-// TODO refactor
 export function mapDbScheduleToModel({
   id,
   mondayStartTime,
